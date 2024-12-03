@@ -1,0 +1,75 @@
+<!DOCTYPE html>
+<html lang="en-us">
+  <head>
+    <meta charset="utf-8">
+    <meta http-equiv="Content-Type" content="text/html; charset=utf-8">
+    <title>Duke Nukem 3D - Easter Egg</title>
+    <style type="text/css">
+      body {
+        background-color: #000;
+        color: #fff;
+        font-family: 'Courier New', monospace;
+        margin: 0;
+        padding: 20px;
+        display: flex;
+        flex-direction: column;
+        align-items: center;
+        min-height: 100vh;
+      }
+      .dosbox-container { 
+        width: 640px; 
+        height: 400px;
+        margin: 20px auto;
+        box-shadow: 0 0 20px rgba(0, 255, 255, 0.5);
+      }
+      .dosbox-container > .dosbox-overlay { 
+        background: url(duke3d-cover.png);
+        background-size: cover;
+      }
+      button {
+        background: #000;
+        color: #0ff;
+        border: 2px solid #0ff;
+        padding: 10px 20px;
+        font-family: 'Courier New', monospace;
+        cursor: pointer;
+        transition: all 0.3s ease;
+      }
+      button:hover {
+        background: #0ff;
+        color: #000;
+      }
+      .loading {
+        position: fixed;
+        top: 50%;
+        left: 50%;
+        transform: translate(-50%, -50%);
+        font-size: 24px;
+        color: #0ff;
+        text-shadow: 0 0 10px #0ff;
+        display: none;
+      }
+    </style>
+  </head>
+  <body>
+    <div id="dosbox"></div>
+    <button onclick="dosbox.requestFullScreen();">Make fullscreen</button>
+    <div class="loading" id="loadingText">Loading Duke Nukem 3D...</div>
+    
+    <script type="text/javascript" src="js-dos/js-dos.js"></script>
+    <script type="text/javascript">
+      document.getElementById('loadingText').style.display = 'block';
+      
+      var dosbox = new Dos({
+        id: "dosbox",
+        onload: function (dosbox) {
+          dosbox.run("duke3d.zip", "./DUKE3D.EXE");
+          document.getElementById('loadingText').style.display = 'none';
+        },
+        onrun: function (dosbox, app) {
+          console.log("App '" + app + "' is running");
+        }
+      });
+    </script>
+  </body>
+</html>

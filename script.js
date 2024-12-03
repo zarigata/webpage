@@ -300,7 +300,26 @@ class MiniTerminal {
             'ls': () => this.listFiles(),
             'echo': (args) => this.echo(args),
             'whoami': () => this.print('root'),
-            'exit': () => this.hide()
+            'exit': () => this.hide(),
+            'duke': () => {
+                // Save current music state
+                const wasPlaying = this.isPlaying;
+                if (wasPlaying) {
+                    this.togglePlay();
+                }
+                
+                // Add loading effect
+                const terminal = document.querySelector('.terminal');
+                terminal.innerHTML += '<div class="command-output" style="color: #0ff">Loading Duke Nukem 3D...</div>';
+                terminal.innerHTML += '<div class="command-output" style="color: #0ff">It\'s time to kick ass and chew bubble gum...</div>';
+                terminal.innerHTML += '<div class="command-output" style="color: #ff0">And I\'m all outta gum!</div>';
+                
+                // Redirect to Duke page
+                setTimeout(() => {
+                    window.location.href = 'duke/index.html';
+                }, 2000);
+                return;
+            }
         };
         this.setupEventListeners();
     }
@@ -308,9 +327,15 @@ class MiniTerminal {
     setupEventListeners() {
         this.input.addEventListener('keypress', (e) => {
             if (e.key === 'Enter') {
-                const command = this.input.value.trim();
-                this.executeCommand(command);
+                const command = this.input.value.trim().toLowerCase();
                 this.input.value = '';
+                
+                // Easter egg commands
+                if (this.commands[command]) {
+                    this.commands[command]();
+                } else if (command) {
+                    this.print(`Command not found: ${command}`);
+                }
             }
         });
 
@@ -369,6 +394,7 @@ class MiniTerminal {
         this.print('  echo    - Print text');
         this.print('  whoami  - Show current user');
         this.print('  exit    - Close terminal');
+        this.print('  duke    - Play Duke Nukem 3D');
     }
 
     listFiles() {
