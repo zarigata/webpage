@@ -403,6 +403,7 @@ document.addEventListener('DOMContentLoaded', () => {
 class MusicPlayer {
     constructor() {
         this.tracks = [];
+        this.baseUrl = this.getBaseUrl();
         
         // Initialize UI Elements
         this.initializeUIElements();
@@ -425,6 +426,85 @@ class MusicPlayer {
             this.shuffleTracks();
             this.loadTrack(this.currentTrackIndex);
         });
+    }
+
+    getBaseUrl() {
+        // Get the repository name from the path
+        const pathSegments = window.location.pathname.split('/');
+        const repoName = pathSegments[1]; // Empty for local, repo name for GitHub Pages
+        
+        if (window.location.hostname === 'localhost' || window.location.hostname === '127.0.0.1') {
+            return '';
+        } else {
+            return `/${repoName}`; // e.g., '/Zarigata'
+        }
+    }
+
+    async loadTrackList() {
+        try {
+            // First try loading from tracks.json
+            const response = await fetch(`${this.baseUrl}/tracks.json`);
+            if (!response.ok) {
+                throw new Error('Failed to fetch track list');
+            }
+            
+            const tracks = await response.json();
+            
+            // Add base URL to track paths
+            this.tracks = tracks.map(track => ({
+                ...track,
+                url: `${this.baseUrl}/${track.url}`
+            }));
+            
+            console.log(`Loaded ${this.tracks.length} tracks from ${this.baseUrl}/tracks.json`);
+            
+            // Update current track index
+            this.currentTrackIndex = Math.floor(Math.random() * this.tracks.length);
+            
+        } catch (error) {
+            console.error('Error loading track list:', error);
+            // Fallback to a default track if loading fails
+            this.tracks = [{
+                url: `${this.baseUrl}/midi/ACME - Mental Delivrance (Keygen Song) [HQ].mp3`,
+                name: 'Mental Delivrance',
+                artist: 'ACME'
+            }];
+        }
+    }
+
+    loadTrack(index) {
+        try {
+            this.currentTrackIndex = index;
+            const track = this.tracks[index];
+            
+            console.log('Loading track:', track.url);
+            
+            // Update UI first
+            this.trackNameElement.textContent = `${track.artist} - ${track.name}`;
+            
+            // Store current playing state
+            const wasPlaying = this.isPlaying;
+            
+            // Load new track
+            this.audio.src = track.url;
+            this.audio.load();
+            
+            // If we were playing before, start playing the new track
+            if (wasPlaying) {
+                this.audio.play()
+                    .then(() => {
+                        this.isPlaying = true;
+                        this.playPauseBtn.textContent = '⏸';
+                    })
+                    .catch(error => {
+                        console.error('Error playing track:', error);
+                        this.nextTrack(); // Try next track if current fails
+                    });
+            }
+        } catch (error) {
+            console.error('Error loading track:', error);
+            this.nextTrack();
+        }
     }
 
     initializeUIElements() {
@@ -465,66 +545,6 @@ class MusicPlayer {
                 this.playerWindow.style.height = 'auto';
             }
         });
-    }
-
-    async loadTrackList() {
-        try {
-            // First try loading from tracks.json
-            const response = await fetch('tracks.json');
-            if (!response.ok) {
-                throw new Error('Failed to fetch track list');
-            }
-            
-            this.tracks = await response.json();
-            console.log(`Loaded ${this.tracks.length} tracks`);
-            
-            // Update current track index
-            this.currentTrackIndex = Math.floor(Math.random() * this.tracks.length);
-            
-        } catch (error) {
-            console.error('Error loading track list:', error);
-            // Fallback to a default track if loading fails
-            this.tracks = [{
-                url: 'midi/ACME - Mental Delivrance (Keygen Song) [HQ].mp3',
-                name: 'Mental Delivrance',
-                artist: 'ACME'
-            }];
-        }
-    }
-
-    loadTrack(index) {
-        try {
-            this.currentTrackIndex = index;
-            const track = this.tracks[index];
-            
-            console.log('Loading track:', track.url);
-            
-            // Update UI first
-            this.trackNameElement.textContent = `${track.artist} - ${track.name}`;
-            
-            // Store current playing state
-            const wasPlaying = this.isPlaying;
-            
-            // Load new track
-            this.audio.src = track.url;
-            this.audio.load();
-            
-            // If we were playing before, start playing the new track
-            if (wasPlaying) {
-                this.audio.play()
-                    .then(() => {
-                        this.isPlaying = true;
-                        this.playPauseBtn.textContent = '⏸';
-                    })
-                    .catch(error => {
-                        console.error('Error playing next track:', error);
-                        this.nextTrack(); // Try next track if current fails
-                    });
-            }
-        } catch (error) {
-            console.error('Error loading track:', error);
-            this.nextTrack();
-        }
     }
 
     async togglePlay() {
