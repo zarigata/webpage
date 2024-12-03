@@ -103,34 +103,31 @@
         <p>Use/Open: Space</p>
     </div>
 
-    <script src="js-dos/js-dos.js"></script>
+    <script src="https://unpkg.com/js-dos@7.5.0/dist/js-dos.js"></script>
     <script>
         const status = document.getElementById('status');
         let dosbox = null;
 
-        Dos(document.getElementById("dosbox"), {
-            wdosboxUrl: "js-dos/wdosbox.js"
-        }).ready((fs, main) => {
-            dosbox = main;
-            status.innerHTML = "Loading Duke Nukem 3D...";
-            
-            fs.extract("duke3d.zip").then(() => {
-                main(["-c", "cd duke3d", "-c", "duke3d.exe"])
-                    .then(() => {
-                        status.innerHTML = "Game loaded! Press any key to start.";
-                    })
-                    .catch((error) => {
-                        status.innerHTML = "Error loading game: " + error;
-                        console.error(error);
-                    });
-            }).catch(error => {
-                status.innerHTML = "Error extracting game files: " + error;
+        // Initialize js-dos
+        emulators.pathPrefix = "https://unpkg.com/js-dos@7.5.0/dist/";
+
+        Dos(document.getElementById("dosbox"))
+            .then(dos => {
+                dosbox = dos;
+                status.innerHTML = "Loading Duke Nukem 3D...";
+                
+                return dos.extract("duke3d.zip");
+            })
+            .then(() => {
+                return dosbox.run(["-c", "cd duke3d", "-c", "duke3d.exe"]);
+            })
+            .then(() => {
+                status.innerHTML = "Game loaded! Press any key to start.";
+            })
+            .catch(error => {
+                status.innerHTML = "Error: " + error;
                 console.error(error);
             });
-        }).catch(error => {
-            status.innerHTML = "Error initializing js-dos: " + error;
-            console.error(error);
-        });
     </script>
 </body>
 </html>
