@@ -1,0 +1,127 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Zarigata | Profile</title>
+    <link rel="stylesheet" href="style.css">
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0/css/all.min.css">
+</head>
+<body>
+    <div id="loading-screen">
+        <div class="terminal">
+            <div class="terminal-header">
+                <div class="terminal-buttons">
+                    <span></span>
+                    <span></span>
+                    <span></span>
+                </div>
+                <div class="terminal-title">SYSTEM INITIALIZATION</div>
+            </div>
+            <div class="terminal-content">
+                <!-- ASCII art will be inserted here -->
+                <div class="typing-text"></div>
+                <div class="cursor">_</div>
+            </div>
+            <div class="progress-bar">
+                <div class="progress"></div>
+            </div>
+        </div>
+    </div>
+
+    <div id="jumpscare" class="jumpscare">
+        <img src="b1fa682d-fea1-4df8-9b1e-35527b292d7a-removebg-preview.png" alt="Jumpscare">
+    </div>
+
+    <div id="main-content" class="hidden">
+        <div class="cursor"></div>
+        <div class="container">
+            <div class="profile-card">
+                <div class="glitch-wrapper">
+                    <h1 class="glitch" data-text="ZARIGATA">ZARIGATA</h1>
+                </div>
+                <div class="glitch-image-container">
+                    <img src="b1fa682d-fea1-4df8-9b1e-35527b292d7a-removebg-preview.png" alt="BF1" class="glitch-image">
+                    <div class="glitch-overlay"></div>
+                    <div class="aura"></div>
+                </div>
+                <div class="profile-content">
+                    <p class="bio">Underground Developer | Phonk Enthusiast</p>
+                    <div class="social-links">
+                        <a href="https://github.com/zarigata" target="_blank" class="social-btn">
+                            <i class="fab fa-github"></i>
+                            <span>GitHub</span>
+                        </a>
+                        <a href="https://steamcommunity.com/id/zarigata/" target="_blank" class="social-btn">
+                            <i class="fab fa-steam"></i>
+                            <span>Steam</span>
+                        </a>
+                        <a href="https://open.spotify.com/artist/71D0nDzGGF0aNLeNfVHUGB?si=be5e5081719c49ad" target="_blank" class="social-btn spotify-btn">
+                            <i class="fab fa-spotify"></i>
+                            <span>Spotify</span>
+                        </a>
+                        <a href="https://www.printables.com/@Zarigata_13703" target="_blank" class="social-btn printables-btn">
+                            <i class="fas fa-cube"></i>
+                            <span>Printables</span>
+                        </a>
+                        <a href="#" class="social-btn" onclick="copyDiscord()">
+                            <i class="fab fa-discord"></i>
+                            <span>Discord</span>
+                        </a>
+                        <a href="https://ollama.com/zarigata" target="_blank" class="social-btn">
+                            <i class="fas fa-link"></i>
+                            <span>Ollama</span>
+                        </a>
+                    </div>
+                </div>
+            </div>
+        </div>
+        <div id="scroll-bar">
+            <div class="scroll-text"></div>
+        </div>
+        <div id="uv-meter" class="uv-meter">
+            <div class="title-bar">
+                <div class="title">ZARIGATA MUSIC PLAYER</div>
+                <div class="controls">
+                    <button id="minimize-player"></button>
+                    <button id="close-player"></button>
+                </div>
+            </div>
+            <div class="uv-container">
+                <canvas id="uv-canvas"></canvas>
+            </div>
+            <div class="music-controls">
+                <div class="track-info">
+                    <span id="track-name">No track playing</span>
+                </div>
+                <div class="controls">
+                    <button id="prev-track">◀◀</button>
+                    <button id="play-pause">▶</button>
+                    <button id="next-track">▶▶</button>
+                    <input type="range" id="volume-slider" min="0" max="100" value="50">
+                </div>
+            </div>
+        </div>
+    </div>
+    <div id="notification" class="notification">Discord tag copied!</div>
+    <div id="mini-terminal" class="mini-terminal hidden">
+        <div class="terminal-header">
+            <div class="terminal-buttons">
+                <span></span>
+                <span></span>
+                <span></span>
+            </div>
+            <div class="terminal-title">ZARIGATA CONSOLE</div>
+        </div>
+        <div class="terminal-content">
+            <div id="terminal-output"></div>
+            <div class="command-line">
+                <span class="prompt">root@zarigata:~$</span>
+                <input type="text" id="terminal-input" autocomplete="off">
+            </div>
+        </div>
+    </div>
+    <script src="audioData.js"></script>
+    <script src="script.js"></script>
+</body>
+</html>
