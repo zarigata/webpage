@@ -402,7 +402,6 @@ document.addEventListener('DOMContentLoaded', () => {
 // Music Player and UV Meter
 class MusicPlayer {
     constructor() {
-        this.serverUrl = 'http://localhost:8000';
         this.tracks = [];
         
         // Initialize UI Elements
@@ -470,19 +469,13 @@ class MusicPlayer {
 
     async loadTrackList() {
         try {
-            const response = await fetch(`${this.serverUrl}/list-tracks`);
+            // First try loading from tracks.json
+            const response = await fetch('tracks.json');
             if (!response.ok) {
                 throw new Error('Failed to fetch track list');
             }
             
-            const tracks = await response.json();
-            
-            // Add server URL to track URLs
-            this.tracks = tracks.map(track => ({
-                ...track,
-                url: `${this.serverUrl}${track.url}`
-            }));
-            
+            this.tracks = await response.json();
             console.log(`Loaded ${this.tracks.length} tracks`);
             
             // Update current track index
@@ -492,7 +485,7 @@ class MusicPlayer {
             console.error('Error loading track list:', error);
             // Fallback to a default track if loading fails
             this.tracks = [{
-                url: `${this.serverUrl}/midi/ACME - Mental Delivrance (Keygen Song) [HQ].mp3`,
+                url: 'midi/ACME - Mental Delivrance (Keygen Song) [HQ].mp3',
                 name: 'Mental Delivrance',
                 artist: 'ACME'
             }];
