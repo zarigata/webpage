@@ -108,12 +108,8 @@
         const status = document.getElementById('status');
         let dosbox = null;
 
-        var dos = Dos(document.getElementById("dosbox"), {
-            wdosboxUrl: "https://js-dos.com/6.22/current/wdosbox.js",
-            onprogress: (stage, total, loaded) => {
-                const message = loaded === total ? "Ready!" : `Loading: ${((loaded / total) * 100) | 0}%`;
-                status.innerHTML = `${stage}: ${message}`;
-            },
+        Dos(document.getElementById("dosbox"), {
+            wdosboxUrl: "js-dos/wdosbox.js"
         }).ready((fs, main) => {
             dosbox = main;
             status.innerHTML = "Loading Duke Nukem 3D...";
@@ -127,7 +123,13 @@
                         status.innerHTML = "Error loading game: " + error;
                         console.error(error);
                     });
+            }).catch(error => {
+                status.innerHTML = "Error extracting game files: " + error;
+                console.error(error);
             });
+        }).catch(error => {
+            status.innerHTML = "Error initializing js-dos: " + error;
+            console.error(error);
         });
     </script>
 </body>
