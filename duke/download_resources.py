@@ -1,8 +1,6 @@
 import os
 import requests
-import zipfile
 from pathlib import Path
-import shutil
 
 def download_file(url, filename):
     print(f"Downloading {filename}...")
@@ -13,37 +11,21 @@ def download_file(url, filename):
         for chunk in response.iter_content(chunk_size=8192):
             f.write(chunk)
 
-def download_github_repo(repo_url, branch='main'):
-    zip_url = f"{repo_url}/archive/refs/heads/{branch}.zip"
-    zip_file = "repo.zip"
-    
-    print(f"Downloading repository {repo_url}...")
-    download_file(zip_url, zip_file)
-    
-    # Extract the zip file
-    with zipfile.ZipFile(zip_file, 'r') as zip_ref:
-        zip_ref.extractall('.')
-    
-    # Remove the zip file
-    os.remove(zip_file)
-    
-    # Get the extracted folder name
-    extracted_dir = next(d for d in os.listdir('.') if d.startswith('jsdoom-'))
-    
-    # Move js-doom files to the correct location
-    os.makedirs('js-doom', exist_ok=True)
-    shutil.copy(f"{extracted_dir}/dist/js-doom.js", "js-doom/js-doom.js")
-    shutil.copy(f"{extracted_dir}/dist/js-doom.wasm", "js-doom/js-doom.wasm")
-    
-    # Cleanup
-    shutil.rmtree(extracted_dir)
-
 def main():
-    # Create directories
+    # Create js-doom directory
     Path('js-doom').mkdir(exist_ok=True)
     
-    # Download js-doom from GitHub
-    download_github_repo("https://github.com/DaniHRE/jsdoom")
+    # Direct URLs to the js-doom files from the repository
+    js_doom_files = {
+        'js-doom.js': 'https://raw.githubusercontent.com/DaniHRE/jsdoom/main/public/js-doom.js',
+        'js-doom.wasm': 'https://raw.githubusercontent.com/DaniHRE/jsdoom/main/public/js-doom.wasm',
+        'doom1.wad': 'https://raw.githubusercontent.com/DaniHRE/jsdoom/main/public/doom1.wad'
+    }
+    
+    # Download each file
+    for filename, url in js_doom_files.items():
+        target_path = f"js-doom/{filename}"
+        download_file(url, target_path)
     
     print("All resources downloaded successfully!")
 
