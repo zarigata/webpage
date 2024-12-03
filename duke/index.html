@@ -18,12 +18,13 @@
             overflow: hidden;
         }
         
-        #canvas {
+        #jsdos {
             width: 800px;
             height: 600px;
             border: 2px solid #0ff;
             box-shadow: 0 0 20px rgba(0, 255, 255, 0.5);
             margin: 20px;
+            background-color: #000;
         }
         
         .controls {
@@ -69,32 +70,62 @@
             top: 20px;
             left: 20px;
         }
+
+        #status {
+            color: #0ff;
+            margin: 10px;
+            text-align: center;
+        }
     </style>
 </head>
 <body>
     <button class="back-button" onclick="window.location.href='../'">← Back to Terminal</button>
     
-    <canvas id="canvas"></canvas>
+    <div id="jsdos"></div>
+    <div id="status">Loading...</div>
     
     <div class="controls">
-        <button onclick="Module.requestFullscreen(document.getElementById('canvas'))">Fullscreen</button>
+        <button onclick="ci.fullscreen()">Fullscreen</button>
         <button onclick="location.reload()">Restart Game</button>
     </div>
     
     <div class="instructions">
         <h3>Controls:</h3>
-        <p>Move: Arrow Keys or WASD</p>
+        <p>Move: Arrow Keys</p>
+        <p>Run: Left Shift + Arrow Keys</p>
         <p>Shoot: Ctrl or Space</p>
         <p>Strafe: Alt + Arrow Keys</p>
-        <p>Run: Shift + Arrow Keys</p>
+        <p>Use/Open: Space</p>
     </div>
 
-    <script type='text/javascript'>
-        var Module = {
-            canvas: document.getElementById('canvas'),
-            arguments: ['-iwad', 'js-doom/doom1.wad']
-        };
+    <script src="js-dos/js-dos.js"></script>
+    <script>
+        const dosbox = document.getElementById('jsdos');
+        const status = document.getElementById('status');
+        
+        // Initialize js-dos
+        Dos(dosbox, {
+            wdosboxUrl: "js-dos/wdosbox.js",
+            onready: (fs, main) => {
+                status.innerHTML = "Loading Duke Nukem 3D...";
+                
+                // Load the game bundle
+                fs.extract("duke3d.zip").then(() => {
+                    main(["-c", "cd duke3d", "-c", "duke3d.exe"])
+                        .then((ci) => {
+                            window.ci = ci;
+                            status.innerHTML = "Game loaded! Press any key to start.";
+                        })
+                        .catch((error) => {
+                            status.innerHTML = "Error loading game: " + error;
+                            console.error(error);
+                        });
+                });
+            },
+        }).catch((error) => {
+            status.innerHTML = "Error initializing DOSBox: " + error;
+            console.error(error);
+        });
     </script>
-    <script async type="text/javascript" src="js-doom/js-doom.js"></script>
 </body>
 </html>
