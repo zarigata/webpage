@@ -1,75 +1,100 @@
 <!DOCTYPE html>
-<html lang="en-us">
-  <head>
-    <meta charset="utf-8">
-    <meta http-equiv="Content-Type" content="text/html; charset=utf-8">
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>Duke Nukem 3D - Easter Egg</title>
-    <style type="text/css">
-      body {
-        background-color: #000;
-        color: #fff;
-        font-family: 'Courier New', monospace;
-        margin: 0;
-        padding: 20px;
-        display: flex;
-        flex-direction: column;
-        align-items: center;
-        min-height: 100vh;
-      }
-      .dosbox-container { 
-        width: 640px; 
-        height: 400px;
-        margin: 20px auto;
-        box-shadow: 0 0 20px rgba(0, 255, 255, 0.5);
-      }
-      .dosbox-container > .dosbox-overlay { 
-        background: url(duke3d-cover.png);
-        background-size: cover;
-      }
-      button {
-        background: #000;
-        color: #0ff;
-        border: 2px solid #0ff;
-        padding: 10px 20px;
-        font-family: 'Courier New', monospace;
-        cursor: pointer;
-        transition: all 0.3s ease;
-      }
-      button:hover {
-        background: #0ff;
-        color: #000;
-      }
-      .loading {
-        position: fixed;
-        top: 50%;
-        left: 50%;
-        transform: translate(-50%, -50%);
-        font-size: 24px;
-        color: #0ff;
-        text-shadow: 0 0 10px #0ff;
-        display: none;
-      }
-    </style>
-  </head>
-  <body>
-    <div id="dosbox"></div>
-    <button onclick="dosbox.requestFullScreen();">Make fullscreen</button>
-    <div class="loading" id="loadingText">Loading Duke Nukem 3D...</div>
-    
-    <script type="text/javascript" src="js-dos/js-dos.js"></script>
-    <script type="text/javascript">
-      document.getElementById('loadingText').style.display = 'block';
-      
-      var dosbox = new Dos({
-        id: "dosbox",
-        onload: function (dosbox) {
-          dosbox.run("duke3d.zip", "./DUKE3D.EXE");
-          document.getElementById('loadingText').style.display = 'none';
-        },
-        onrun: function (dosbox, app) {
-          console.log("App '" + app + "' is running");
+    <style>
+        body {
+            background-color: #000;
+            color: #fff;
+            font-family: 'Courier New', monospace;
+            margin: 0;
+            padding: 0;
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+            min-height: 100vh;
+            overflow: hidden;
         }
-      });
+        
+        #canvas {
+            width: 800px;
+            height: 600px;
+            border: 2px solid #0ff;
+            box-shadow: 0 0 20px rgba(0, 255, 255, 0.5);
+            margin: 20px;
+        }
+        
+        .controls {
+            margin: 20px;
+            text-align: center;
+        }
+        
+        button {
+            background: #000;
+            color: #0ff;
+            border: 2px solid #0ff;
+            padding: 10px 20px;
+            font-family: 'Courier New', monospace;
+            cursor: pointer;
+            transition: all 0.3s ease;
+            margin: 0 10px;
+        }
+        
+        button:hover {
+            background: #0ff;
+            color: #000;
+        }
+        
+        .loading {
+            position: fixed;
+            top: 50%;
+            left: 50%;
+            transform: translate(-50%, -50%);
+            font-size: 24px;
+            color: #0ff;
+            text-shadow: 0 0 10px #0ff;
+        }
+        
+        .instructions {
+            color: #0ff;
+            text-align: center;
+            margin: 20px;
+            max-width: 600px;
+        }
+        
+        .back-button {
+            position: fixed;
+            top: 20px;
+            left: 20px;
+        }
+    </style>
+</head>
+<body>
+    <button class="back-button" onclick="window.location.href='../'">← Back to Terminal</button>
+    
+    <canvas id="canvas"></canvas>
+    
+    <div class="controls">
+        <button onclick="Module.requestFullscreen(document.getElementById('canvas'))">Fullscreen</button>
+        <button onclick="location.reload()">Restart Game</button>
+    </div>
+    
+    <div class="instructions">
+        <h3>Controls:</h3>
+        <p>Move: Arrow Keys or WASD</p>
+        <p>Shoot: Ctrl or Space</p>
+        <p>Strafe: Alt + Arrow Keys</p>
+        <p>Run: Shift + Arrow Keys</p>
+    </div>
+
+    <script type='text/javascript'>
+        var Module = {
+            canvas: document.getElementById('canvas'),
+            arguments: ['-iwad', 'duke3d.wad']
+        };
     </script>
-  </body>
+    <script async type="text/javascript" src="js-doom/js-doom.js"></script>
+</body>
 </html>

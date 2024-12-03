@@ -310,11 +310,11 @@ class MiniTerminal {
                 
                 // Add loading effect
                 const terminal = document.querySelector('.terminal');
-                terminal.innerHTML += '<div class="command-output" style="color: #0ff">Loading Duke Nukem 3D...</div>';
-                terminal.innerHTML += '<div class="command-output" style="color: #0ff">It\'s time to kick ass and chew bubble gum...</div>';
-                terminal.innerHTML += '<div class="command-output" style="color: #ff0">And I\'m all outta gum!</div>';
+                terminal.innerHTML += '<div class="command-output" style="color: #0ff">Initializing Doom Engine...</div>';
+                terminal.innerHTML += '<div class="command-output" style="color: #0ff">Prepare for demon slaying...</div>';
+                terminal.innerHTML += '<div class="command-output" style="color: #ff0">RIP AND TEAR!</div>';
                 
-                // Redirect to Duke page
+                // Redirect to Doom page
                 setTimeout(() => {
                     window.location.href = 'duke/index.html';
                 }, 2000);
