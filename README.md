@@ -2,44 +2,56 @@
 
 A cyberpunk-themed personal website with an interactive music player and dynamic visual elements.
 
-## Setup for GitHub Pages
+## Automatic GitHub Pages Deployment
 
-1. Run the track generator script before deploying:
-   ```bash
-   python generate_tracks_json.py
-   ```
-   This will create `tracks.json` with your music track information.
+This repository is set up with GitHub Actions for automatic deployment:
 
-2. Make sure your repository has this structure:
-   ```
-   your-repo/
-   ├── index.html
-   ├── style.css
-   ├── script.js
-   ├── tracks.json
-   ├── midi/
-   │   └── (your mp3 files)
-   └── README.md
-   ```
-
-3. Enable GitHub Pages in your repository settings:
-   - Go to Settings > Pages
-   - Select your main branch
-   - Save
-
-4. Your site will be available at: `https://[your-username].github.io/[repo-name]/`
+1. Push your changes to the `main` branch
+2. GitHub Actions will automatically:
+   - Generate tracks.json when you add/modify MP3 files
+   - Deploy the site to GitHub Pages
 
 ## Adding New Music
 
 1. Add new MP3 files to the `midi` directory
-2. Run `python generate_tracks_json.py` to update tracks.json
-3. Commit and push your changes
-4. GitHub Pages will automatically update
+2. Commit and push to the `main` branch
+3. GitHub Actions will automatically:
+   - Run generate_tracks_json.py
+   - Update tracks.json
+   - Deploy the changes
+
+## Repository Structure
+```
+your-repo/
+├── index.html
+├── style.css
+├── script.js
+├── tracks.json
+├── midi/
+│   └── (your mp3 files)
+├── .github/
+│   └── workflows/
+│       ├── update-tracks.yml
+│       └── deploy-pages.yml
+└── README.md
+```
+
+## Setup Instructions
+
+1. Create a new GitHub repository
+2. Push this code to the repository
+3. Enable GitHub Pages in repository settings:
+   - Go to Settings > Pages
+   - Source: Deploy from a branch
+   - Branch: gh-pages
+   - Save
+
+4. Your site will be available at: `https://[your-username].github.io/[repo-name]/`
 
 ## Local Development
 
-1. Run a local server:
-   ```bash
-   python -m http.server 8000
-   ```
-2. Open `http://localhost:8000` in your browser
+For local testing:
+```bash
+python -m http.server 8000
+```
+Then open `http://localhost:8000` in your browser
