@@ -8,15 +8,20 @@ on:
       - 'midi/**'  # Only run when files in midi directory change
   workflow_dispatch:  # Allow manual trigger
 
+permissions:
+  contents: write
+
 jobs:
   update-tracks:
     runs-on: ubuntu-latest
     
     steps:
-    - uses: actions/checkout@v2
+    - uses: actions/checkout@v3
+      with:
+        token: ${{ secrets.GITHUB_TOKEN }}
     
     - name: Set up Python
-      uses: actions/setup-python@v2
+      uses: actions/setup-python@v4
       with:
         python-version: '3.x'
     
@@ -26,7 +31,7 @@ jobs:
     
     - name: Commit and push if changed
       run: |
-        git config --local user.email "action@github.com"
-        git config --local user.name "GitHub Action"
+        git config --local user.email "github-actions[bot]@users.noreply.github.com"
+        git config --local user.name "github-actions[bot]"
         git add tracks.json
-        git diff --quiet && git diff --staged --quiet || (git commit -m "Update tracks.json" && git push)
+        git diff --quiet && git diff --staged --quiet || (git commit -m "Update tracks.json [skip ci]" && git push)
