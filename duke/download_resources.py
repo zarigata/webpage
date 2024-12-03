@@ -17,9 +17,9 @@ def main():
     
     # Download js-dos from CDN
     js_dos_files = {
-        'js-dos.js': 'https://cdn.jsdelivr.net/npm/js-dos@7.5.0/dist/js-dos.js',
-        'wdosbox.js': 'https://cdn.jsdelivr.net/npm/js-dos@7.5.0/dist/wdosbox.js',
-        'wdosbox.wasm': 'https://cdn.jsdelivr.net/npm/js-dos@7.5.0/dist/wdosbox.wasm'
+        'js-dos.js': 'https://js-dos.com/cdn/v7/current/js-dos.js',
+        'wdosbox.js': 'https://js-dos.com/cdn/v7/current/wdosbox.js',
+        'wdosbox.wasm': 'https://js-dos.com/cdn/v7/current/wdosbox.wasm'
     }
     
     # Download each file

@@ -18,7 +18,7 @@
             overflow: hidden;
         }
         
-        #jsdos {
+        .dosbox-container {
             width: 800px;
             height: 600px;
             border: 2px solid #0ff;
@@ -81,11 +81,11 @@
 <body>
     <button class="back-button" onclick="window.location.href='../'">← Back to Terminal</button>
     
-    <div id="jsdos"></div>
+    <div id="dosbox"></div>
     <div id="status">Loading...</div>
     
     <div class="controls">
-        <button onclick="ci.fullscreen()">Fullscreen</button>
+        <button id="fullscreen">Fullscreen</button>
         <button onclick="location.reload()">Restart Game</button>
     </div>
     
@@ -100,30 +100,37 @@
 
     <script src="js-dos/js-dos.js"></script>
     <script>
-        const dosbox = document.getElementById('jsdos');
+        const dosbox = document.getElementById('dosbox');
         const status = document.getElementById('status');
-        
-        // Initialize js-dos
-        Dos(dosbox, {
-            wdosboxUrl: "js-dos/wdosbox.js",
-            onready: (fs, main) => {
-                status.innerHTML = "Loading Duke Nukem 3D...";
-                
-                // Load the game bundle
-                fs.extract("duke3d.zip").then(() => {
-                    main(["-c", "cd duke3d", "-c", "duke3d.exe"])
-                        .then((ci) => {
-                            window.ci = ci;
-                            status.innerHTML = "Game loaded! Press any key to start.";
-                        })
-                        .catch((error) => {
-                            status.innerHTML = "Error loading game: " + error;
-                            console.error(error);
-                        });
-                });
-            },
-        }).catch((error) => {
-            status.innerHTML = "Error initializing DOSBox: " + error;
+        let dos = null;
+
+        // Create dosbox
+        DosBox(dosbox, {
+            wdosboxUrl: "js-dos/wdosbox.js"
+        }).then(function (dosInstance) {
+            dos = dosInstance;
+            status.innerHTML = "Loading Duke Nukem 3D...";
+            
+            // Mount the zip file
+            return dos.mount("duke3d.zip", "c");
+        }).then(function () {
+            // Run the game
+            return dos.run([
+                "c:",
+                "cd duke3d",
+                "duke3d.exe"
+            ]);
+        }).then(function () {
+            status.innerHTML = "Game loaded! Press any key to start.";
+            
+            // Setup fullscreen button
+            document.getElementById('fullscreen').onclick = function() {
+                if (dos) {
+                    dos.fullscreen();
+                }
+            };
+        }).catch(function (error) {
+            status.innerHTML = "Error: " + error;
             console.error(error);
         });
     </script>
