@@ -18,13 +18,28 @@
             overflow: hidden;
         }
         
-        .dosbox-container {
+        #dosbox {
             width: 800px;
             height: 600px;
             border: 2px solid #0ff;
             box-shadow: 0 0 20px rgba(0, 255, 255, 0.5);
             margin: 20px;
             background-color: #000;
+        }
+        
+        .dosbox-overlay {
+            background-image: url('duke3d-loading.png');
+            background-size: cover;
+        }
+        
+        .dosbox-loader {
+            background-color: #000 !important;
+            box-shadow: 0 0 10px #0ff !important;
+        }
+        
+        .dosbox-loader-message {
+            color: #0ff !important;
+            font-family: 'Courier New', monospace !important;
         }
         
         .controls {
@@ -46,16 +61,6 @@
         button:hover {
             background: #0ff;
             color: #000;
-        }
-        
-        .loading {
-            position: fixed;
-            top: 50%;
-            left: 50%;
-            transform: translate(-50%, -50%);
-            font-size: 24px;
-            color: #0ff;
-            text-shadow: 0 0 10px #0ff;
         }
         
         .instructions {
@@ -85,7 +90,7 @@
     <div id="status">Loading...</div>
     
     <div class="controls">
-        <button id="fullscreen">Fullscreen</button>
+        <button onclick="dosbox.requestFullscreen()">Fullscreen</button>
         <button onclick="location.reload()">Restart Game</button>
     </div>
     
@@ -100,38 +105,29 @@
 
     <script src="js-dos/js-dos.js"></script>
     <script>
-        const dosbox = document.getElementById('dosbox');
         const status = document.getElementById('status');
-        let dos = null;
+        let dosbox = null;
 
-        // Create dosbox
-        DosBox(dosbox, {
-            wdosboxUrl: "js-dos/wdosbox.js"
-        }).then(function (dosInstance) {
-            dos = dosInstance;
+        var dos = Dos(document.getElementById("dosbox"), {
+            wdosboxUrl: "https://js-dos.com/6.22/current/wdosbox.js",
+            onprogress: (stage, total, loaded) => {
+                const message = loaded === total ? "Ready!" : `Loading: ${((loaded / total) * 100) | 0}%`;
+                status.innerHTML = `${stage}: ${message}`;
+            },
+        }).ready((fs, main) => {
+            dosbox = main;
             status.innerHTML = "Loading Duke Nukem 3D...";
             
-            // Mount the zip file
-            return dos.mount("duke3d.zip", "c");
-        }).then(function () {
-            // Run the game
-            return dos.run([
-                "c:",
-                "cd duke3d",
-                "duke3d.exe"
-            ]);
-        }).then(function () {
-            status.innerHTML = "Game loaded! Press any key to start.";
-            
-            // Setup fullscreen button
-            document.getElementById('fullscreen').onclick = function() {
-                if (dos) {
-                    dos.fullscreen();
-                }
-            };
-        }).catch(function (error) {
-            status.innerHTML = "Error: " + error;
-            console.error(error);
+            fs.extract("duke3d.zip").then(() => {
+                main(["-c", "cd duke3d", "-c", "duke3d.exe"])
+                    .then(() => {
+                        status.innerHTML = "Game loaded! Press any key to start.";
+                    })
+                    .catch((error) => {
+                        status.innerHTML = "Error loading game: " + error;
+                        console.error(error);
+                    });
+            });
         });
     </script>
 </body>
