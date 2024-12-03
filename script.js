@@ -402,25 +402,34 @@ document.addEventListener('DOMContentLoaded', () => {
 // Music Player and UV Meter
 class MusicPlayer {
     constructor() {
-        this.tracks = [
-            {
-                url: 'midi/ACME - Mental Delivrance (Keygen Song) [HQ].mp3',
-                name: 'Mental Delivrance',
-                artist: 'ACME'
-            },
-            {
-                url: 'midi/AGAiN - Moonflight (Keygen Song) [HQ].mp3',
-                name: 'Moonflight',
-                artist: 'AGAiN'
-            },
-            {
-                url: 'midi/Digital Insanity - Unreal Superhero 3 (Keygen Song) [HQ].mp3',
-                name: 'Unreal Superhero 3',
-                artist: 'Digital Insanity'
-            }
-        ];
+        this.serverUrl = 'http://localhost:8000';
+        this.tracks = [];
+        
+        // Initialize UI Elements
+        this.initializeUIElements();
+        
+        // Create audio element
+        this.audio = new Audio();
+        this.audio.crossOrigin = "anonymous";
+        this.audio.volume = 0.5;
+        
+        this.currentTrackIndex = 0;
+        this.isPlaying = false;
+        this.audioContextInitialized = false;
 
-        // UI Elements
+        // Initialize
+        this.setupDraggable();
+        this.setupControls();
+        
+        // Load tracks and start player
+        this.loadTrackList().then(() => {
+            this.shuffleTracks();
+            this.loadTrack(this.currentTrackIndex);
+        });
+    }
+
+    initializeUIElements() {
+        // Get DOM elements
         this.playerWindow = document.getElementById('uv-meter');
         this.canvas = document.getElementById('uv-canvas');
         this.canvasCtx = this.canvas.getContext('2d');
@@ -432,28 +441,21 @@ class MusicPlayer {
         this.minimizeBtn = document.getElementById('minimize-player');
         this.closeBtn = document.getElementById('close-player');
 
-        // Audio Setup
-        this.currentTrackIndex = Math.floor(Math.random() * this.tracks.length);
-        this.audio = new Audio();
-        this.audio.volume = 0.5;
-        this.isPlaying = false;
-
-        // Initialize
-        this.setupDraggable();
-        this.setupControls();
-        this.setupAudioContext();
-        this.shuffleTracks();
-        this.loadTrack(this.currentTrackIndex);
+        // Set initial canvas size
+        this.canvas.width = this.canvas.offsetWidth;
+        this.canvas.height = this.canvas.offsetHeight;
 
         // Window controls
         this.closeBtn.addEventListener('click', () => {
             this.playerWindow.style.display = 'none';
+            if (this.isPlaying) {
+                this.togglePlay();
+            }
         });
 
         this.minimizeBtn.addEventListener('click', () => {
             const container = this.playerWindow.querySelector('.uv-container');
             const controls = this.playerWindow.querySelector('.music-controls');
-            
             if (container.style.display === 'none') {
                 container.style.display = '';
                 controls.style.display = '';
@@ -466,7 +468,108 @@ class MusicPlayer {
         });
     }
 
-    setupAudioContext() {
+    async loadTrackList() {
+        try {
+            const response = await fetch(`${this.serverUrl}/list-tracks`);
+            if (!response.ok) {
+                throw new Error('Failed to fetch track list');
+            }
+            
+            const tracks = await response.json();
+            
+            // Add server URL to track URLs
+            this.tracks = tracks.map(track => ({
+                ...track,
+                url: `${this.serverUrl}${track.url}`
+            }));
+            
+            console.log(`Loaded ${this.tracks.length} tracks`);
+            
+            // Update current track index
+            this.currentTrackIndex = Math.floor(Math.random() * this.tracks.length);
+            
+        } catch (error) {
+            console.error('Error loading track list:', error);
+            // Fallback to a default track if loading fails
+            this.tracks = [{
+                url: `${this.serverUrl}/midi/ACME - Mental Delivrance (Keygen Song) [HQ].mp3`,
+                name: 'Mental Delivrance',
+                artist: 'ACME'
+            }];
+        }
+    }
+
+    loadTrack(index) {
+        try {
+            this.currentTrackIndex = index;
+            const track = this.tracks[index];
+            
+            console.log('Loading track:', track.url);
+            
+            // Update UI first
+            this.trackNameElement.textContent = `${track.artist} - ${track.name}`;
+            
+            // Store current playing state
+            const wasPlaying = this.isPlaying;
+            
+            // Load new track
+            this.audio.src = track.url;
+            this.audio.load();
+            
+            // If we were playing before, start playing the new track
+            if (wasPlaying) {
+                this.audio.play()
+                    .then(() => {
+                        this.isPlaying = true;
+                        this.playPauseBtn.textContent = '⏸';
+                    })
+                    .catch(error => {
+                        console.error('Error playing next track:', error);
+                        this.nextTrack(); // Try next track if current fails
+                    });
+            }
+        } catch (error) {
+            console.error('Error loading track:', error);
+            this.nextTrack();
+        }
+    }
+
+    async togglePlay() {
+        try {
+            // Initialize audio context on first play
+            if (!this.audioContextInitialized) {
+                await this.initializeAudioContext();
+            }
+
+            if (this.audioContext.state === 'suspended') {
+                await this.audioContext.resume();
+            }
+
+            if (this.isPlaying) {
+                this.audio.pause();
+                this.playPauseBtn.textContent = '▶';
+                this.isPlaying = false;
+            } else {
+                const playPromise = this.audio.play();
+                if (playPromise !== undefined) {
+                    try {
+                        await playPromise;
+                        this.playPauseBtn.textContent = '⏸';
+                        this.isPlaying = true;
+                    } catch (error) {
+                        console.error("Playback failed:", error);
+                        this.nextTrack();
+                    }
+                }
+            }
+        } catch (error) {
+            console.error('Toggle play error:', error);
+        }
+    }
+
+    async initializeAudioContext() {
+        if (this.audioContextInitialized) return;
+
         try {
             this.audioContext = new (window.AudioContext || window.webkitAudioContext)();
             this.analyser = this.audioContext.createAnalyser();
@@ -481,49 +584,11 @@ class MusicPlayer {
             
             // Start UV meter animation
             this.setupUVMeter();
+            
+            this.audioContextInitialized = true;
         } catch (error) {
-            console.error('Audio context setup failed:', error);
+            console.error('Failed to initialize audio context:', error);
         }
-    }
-
-    loadTrack(index) {
-        try {
-            this.currentTrackIndex = index;
-            const track = this.tracks[index];
-            
-            // Update UI
-            this.trackNameElement.textContent = `${track.artist} - ${track.name}`;
-            
-            // Load audio
-            this.audio.src = track.url;
-            this.audio.load();
-            
-            // If we were playing, continue playing the new track
-            if (this.isPlaying) {
-                this.audio.play().catch(console.error);
-            }
-        } catch (error) {
-            console.error('Error loading track:', error);
-        }
-    }
-
-    togglePlay() {
-        if (this.audioContext && this.audioContext.state === 'suspended') {
-            this.audioContext.resume();
-        }
-
-        if (this.isPlaying) {
-            this.audio.pause();
-            this.playPauseBtn.textContent = '▶';
-        } else {
-            this.audio.play().catch(error => {
-                console.error('Playback failed:', error);
-                this.nextTrack();
-            });
-            this.playPauseBtn.textContent = '⏸';
-        }
-        
-        this.isPlaying = !this.isPlaying;
     }
 
     prevTrack() {
@@ -554,11 +619,17 @@ class MusicPlayer {
         // Track ended
         this.audio.addEventListener('ended', () => this.nextTrack());
         
-        // Error handling
-        this.audio.addEventListener('error', () => {
-            console.error('Audio error, trying next track');
+        // Audio error handling
+        this.audio.addEventListener('error', (e) => {
+            console.error('Audio error:', e.target.error);
             this.nextTrack();
         });
+
+        // Debug listeners
+        this.audio.addEventListener('playing', () => console.log('Audio started playing'));
+        this.audio.addEventListener('pause', () => console.log('Audio paused'));
+        this.audio.addEventListener('waiting', () => console.log('Audio waiting for data'));
+        this.audio.addEventListener('canplay', () => console.log('Audio can start playing'));
     }
 
     setupUVMeter() {
@@ -600,6 +671,13 @@ class MusicPlayer {
         drawMeter();
     }
 
+    shuffleTracks() {
+        for (let i = this.tracks.length - 1; i > 0; i--) {
+            const j = Math.floor(Math.random() * (i + 1));
+            [this.tracks[i], this.tracks[j]] = [this.tracks[j], this.tracks[i]];
+        }
+    }
+
     setupDraggable() {
         const titleBar = this.playerWindow.querySelector('.title-bar');
         let isDragging = false;
@@ -637,13 +715,6 @@ class MusicPlayer {
         titleBar.addEventListener('mousedown', dragStart);
         document.addEventListener('mousemove', drag);
         document.addEventListener('mouseup', dragEnd);
-    }
-
-    shuffleTracks() {
-        for (let i = this.tracks.length - 1; i > 0; i--) {
-            const j = Math.floor(Math.random() * (i + 1));
-            [this.tracks[i], this.tracks[j]] = [this.tracks[j], this.tracks[i]];
-        }
     }
 }
 
