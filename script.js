@@ -319,6 +319,58 @@ class MiniTerminal {
                     window.location.href = 'duke/index.html';
                 }, 2000);
                 return;
+            },
+            'crazy': () => {
+                this.print('INITIATING CHAOS MODE!');
+                
+                // Add crazy effects class to body
+                document.body.classList.add('crazy-mode');
+                
+                // Make elements go crazy
+                const elements = document.querySelectorAll('button, a, img, .terminal, h1, p');
+                elements.forEach(el => {
+                    el.style.transition = 'all 0.5s';
+                    setInterval(() => {
+                        const x = Math.random() * (window.innerWidth - el.offsetWidth);
+                        const y = Math.random() * (window.innerHeight - el.offsetHeight);
+                        const rotation = Math.random() * 360;
+                        const scale = 0.5 + Math.random();
+                        el.style.transform = `translate(${x}px, ${y}px) rotate(${rotation}deg) scale(${scale})`;
+                        el.style.filter = `hue-rotate(${Math.random() * 360}deg)`;
+                    }, 1000);
+                });
+
+                // Add fire effect
+                const fire = document.createElement('div');
+                fire.className = 'fire-overlay';
+                document.body.appendChild(fire);
+
+                // Crazy text effect
+                const texts = document.querySelectorAll('p, h1, h2, h3, button');
+                texts.forEach(text => {
+                    text.style.animation = 'crazyText 0.1s infinite';
+                });
+
+                // Play crazy sound
+                const audio = new Audio('https://www.myinstants.com/media/sounds/epic-sax-guy-loop.mp3');
+                audio.loop = true;
+                audio.play();
+
+                // Return to normal after 10 seconds
+                setTimeout(() => {
+                    document.body.classList.remove('crazy-mode');
+                    fire.remove();
+                    elements.forEach(el => {
+                        el.style.transform = '';
+                        el.style.filter = '';
+                        el.style.transition = '';
+                    });
+                    texts.forEach(text => {
+                        text.style.animation = '';
+                    });
+                    audio.pause();
+                    this.print('Chaos mode deactivated... returning to normal');
+                }, 10000);
             }
         };
         this.setupEventListeners();
@@ -395,6 +447,7 @@ class MiniTerminal {
         this.print('  whoami  - Show current user');
         this.print('  exit    - Close terminal');
         this.print('  duke    - Play Duke Nukem 3D');
+        this.print('  (CRAZY) - Enable chaos mode');
     }
 
     listFiles() {
