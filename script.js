@@ -507,20 +507,10 @@ class MusicPlayer {
     }
 
     initializeUIElements() {
-        // Create player container
-        this.playerContainer = document.createElement('div');
-        this.playerContainer.className = 'music-player';
-        document.body.appendChild(this.playerContainer);
-
-        // Create UV meter canvas
-        this.uvMeterCanvas = document.createElement('canvas');
-        this.uvMeterCanvas.className = 'uv-meter';
-        this.uvMeterCanvas.width = 200;
-        this.uvMeterCanvas.height = 100;
-        this.playerContainer.appendChild(this.uvMeterCanvas);
-        this.uvMeterCtx = this.uvMeterCanvas.getContext('2d');
-
-        // Rest of the UI elements...
+        // Get DOM elements
+        this.playerWindow = document.getElementById('uv-meter');
+        this.canvas = document.getElementById('uv-canvas');
+        this.canvasCtx = this.canvas.getContext('2d');
         this.trackNameElement = document.getElementById('track-name');
         this.playPauseBtn = document.getElementById('play-pause');
         this.prevBtn = document.getElementById('prev-track');
@@ -530,8 +520,6 @@ class MusicPlayer {
         this.closeBtn = document.getElementById('close-player');
 
         // Set initial canvas size
-        this.canvas = document.getElementById('uv-canvas');
-        this.canvasCtx = this.canvas.getContext('2d');
         this.canvas.width = this.canvas.offsetWidth;
         this.canvas.height = this.canvas.offsetHeight;
 
@@ -659,13 +647,15 @@ class MusicPlayer {
             this.analyser = this.audioContext.createAnalyser();
             this.analyser.fftSize = 256;
             
-            // Connect audio source to analyser
+            // Connect audio nodes
             this.source = this.audioContext.createMediaElementSource(this.audio);
             this.source.connect(this.analyser);
             this.analyser.connect(this.audioContext.destination);
             
+            this.dataArray = new Uint8Array(this.analyser.frequencyBinCount);
+            
             // Start UV meter animation
-            this.drawUVMeter();
+            this.setupUVMeter();
             
             this.audioContextInitialized = true;
         } catch (error) {
@@ -714,42 +704,43 @@ class MusicPlayer {
         this.audio.addEventListener('canplay', () => console.log('Audio can start playing'));
     }
 
-    drawUVMeter() {
-        if (!this.audioContextInitialized) return;
-
-        // Get frequency data
-        const bufferLength = this.analyser.frequencyBinCount;
-        const dataArray = new Uint8Array(bufferLength);
-        this.analyser.getByteFrequencyData(dataArray);
-
-        // Clear canvas
-        this.canvasCtx.clearRect(0, 0, this.canvas.width, this.canvas.height);
-
-        // Draw UV bars
-        const barWidth = (this.canvas.width / bufferLength) * 2.5;
-        let x = 0;
-
-        for (let i = 0; i < bufferLength; i++) {
-            const barHeight = (dataArray[i] / 255) * this.canvas.height;
+    setupUVMeter() {
+        const drawMeter = () => {
+            requestAnimationFrame(drawMeter);
             
-            // Create gradient
-            const gradient = this.canvasCtx.createLinearGradient(0, this.canvas.height, 0, 0);
-            gradient.addColorStop(0, '#6B46C1');   // Purple
-            gradient.addColorStop(0.5, '#9F7AEA');  // Light purple
-            gradient.addColorStop(1, '#1A365D');    // Dark blue
+            const width = this.canvas.width;
+            const height = this.canvas.height;
+            const barWidth = width / 32;
             
-            this.canvasCtx.fillStyle = gradient;
-            this.canvasCtx.fillRect(x, this.canvas.height - barHeight, barWidth, barHeight);
+            this.analyser.getByteFrequencyData(this.dataArray);
             
-            x += barWidth + 1;
-        }
-
-        // Add glow effect
-        this.canvasCtx.shadowBlur = 15;
-        this.canvasCtx.shadowColor = '#9F7AEA';
-
-        // Request next frame
-        requestAnimationFrame(() => this.drawUVMeter());
+            this.canvasCtx.fillStyle = '#000';
+            this.canvasCtx.fillRect(0, 0, width, height);
+            
+            const gradient = this.canvasCtx.createLinearGradient(0, height, 0, 0);
+            gradient.addColorStop(0, '#ff0000');
+            gradient.addColorStop(0.5, '#ffff00');
+            gradient.addColorStop(1, '#00ff00');
+            
+            for (let i = 0; i < this.analyser.frequencyBinCount; i++) {
+                const barHeight = (this.dataArray[i] / 255) * height;
+                
+                this.canvasCtx.fillStyle = gradient;
+                this.canvasCtx.fillRect(
+                    i * barWidth,
+                    height - barHeight,
+                    barWidth - 1,
+                    barHeight
+                );
+            }
+            
+            // Add scan line effect
+            const scanLinePos = (Date.now() % 2000) / 2000 * height;
+            this.canvasCtx.fillStyle = 'rgba(255, 255, 255, 0.1)';
+            this.canvasCtx.fillRect(0, scanLinePos, width, 2);
+        };
+        
+        drawMeter();
     }
 
     shuffleTracks() {
