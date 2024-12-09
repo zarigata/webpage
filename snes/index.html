@@ -45,16 +45,33 @@
             background: #000;
             margin-top: 20px;
         }
+        .instructions {
+            margin-top: 20px;
+        }
     </style>
 </head>
 <body>
     <button class="back-button" onclick="window.location.href='../'">Go Back</button>
     
     <div class="snes-container">
+        <h1>SNES Emulator</h1>
         <select id="game-select" class="game-select">
             <option value="">Select a game...</option>
         </select>
         <div id="emulator"></div>
+        <div class="instructions">
+            <h2>Instructions</h2>
+            <p>1. Add your ROM files to the 'roms' directory</p>
+            <p>2. Select a game from the dropdown menu</p>
+            <p>3. Controls:</p>
+            <ul>
+                <li>Arrow keys: Movement</li>
+                <li>X: A button</li>
+                <li>Z: B button</li>
+                <li>Enter: Start</li>
+                <li>Shift: Select</li>
+            </ul>
+        </div>
     </div>
 
     <script src="https://cdn.jsdelivr.net/npm/jsnes/dist/jsnes.min.js"></script>
