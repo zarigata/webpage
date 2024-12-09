@@ -371,6 +371,14 @@ class MiniTerminal {
                     audio.pause();
                     this.print('Chaos mode deactivated... returning to normal');
                 }, 10000);
+            },
+            'nes': () => {
+                this.print('Launching SNES Emulator...');
+                this.print('Loading game library...');
+                
+                setTimeout(() => {
+                    window.location.href = 'snes/index.html';
+                }, 1500);
             }
         };
         this.setupEventListeners();
@@ -448,6 +456,7 @@ class MiniTerminal {
         this.print('  exit    - Close terminal');
         this.print('  duke    - Play Duke Nukem 3D');
         this.print('  (CRAZY) - Enable chaos mode');
+        this.print('  nes     - Play SNES Emulator');
     }
 
     listFiles() {
