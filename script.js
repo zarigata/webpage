@@ -222,14 +222,14 @@ class ScrollingText {
         this.scrollText = document.querySelector('.scroll-text');
         this.sentences = [
             "you cant cok 6milions pizzas in only 2 ovens in a period of 1 year",
-            "System breach detected...",
-            "Accessing mainframe database",
-            "Decrypting secure protocols",
+            "真のチャドだけが参加する",
+            "Die Regierung belügt Sie",
+            "新冠病毒是個謊言，而你卻允許",
             "Initializing neural network",
             "Matrix connection established",
-            "Running quantum algorithms",
+            "不法移民は役に立たない、文化的豊かさはグローバリストの嘘",
             "Bypassing security measures",
-            "Data streams intercepted",
+            "Der österreichische Maler war eine Warnung, und wir haben nicht zugehört, es wird wieder passieren",
             "Cyber realm activated"
         ];
         this.currentIndex = 0;

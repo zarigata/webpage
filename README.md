@@ -14,7 +14,7 @@ This repository is set up with GitHub Actions for automatic deployment:
 ## Adding New Music
 
 1. Add new MP3 files to the `midi` directory
-2. Commit and push to the `main` branch
+2. Commit and push to the `main` branch a
 3. GitHub Actions will automatically:
    - Run generate_tracks_json.py
    - Update tracks.json
