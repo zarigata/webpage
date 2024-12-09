@@ -10,71 +10,76 @@ class SNESEmulator {
         this.gameSelect = document.getElementById('game-select');
         this.gameSelect.addEventListener('change', () => this.loadSelectedGame());
 
-        this.audioEnabled = false;
+        // Initialize audio state
+        this.audioInitialized = false;
         this.audioBuffer = [];
-        this.setupAudio();
+        this.audioContext = null;
+        this.scriptProcessor = null;
+
+        // Initialize emulator state
         this.loadGameList();
+        
+        // Add a message about adding ROMs
+        this.showInitialMessage();
     }
 
-    setupAudio() {
+    showInitialMessage() {
+        const message = document.createElement('div');
+        message.innerHTML = `
+            <div style="padding: 20px; background: rgba(107, 70, 193, 0.2); border-radius: 5px; margin-top: 20px;">
+                <h3 style="margin-top: 0;">Welcome to SNES Emulator</h3>
+                <p>To get started:</p>
+                <ol>
+                    <li>Create a 'roms' directory in the SNES folder</li>
+                    <li>Add your ROM files to the directory</li>
+                    <li>Select a game from the dropdown menu</li>
+                </ol>
+            </div>
+        `;
+        document.getElementById('emulator').appendChild(message);
+    }
+
+    initAudio() {
+        if (this.audioInitialized) return;
+
         try {
             this.audioContext = new (window.AudioContext || window.webkitAudioContext)();
-            this.audioEnabled = true;
             
-            // Modern audio handling using AudioWorklet when possible
-            if (this.audioContext.audioWorklet) {
-                this.setupModernAudio();
-            } else {
-                this.setupLegacyAudio();
+            // Create a gain node to control volume
+            this.gainNode = this.audioContext.createGain();
+            this.gainNode.gain.value = 0.5; // Set initial volume
+            this.gainNode.connect(this.audioContext.destination);
+
+            // Only create ScriptProcessor if needed
+            if (!this.audioContext.audioWorklet) {
+                console.log('AudioWorklet not supported, using ScriptProcessor');
+                this.initScriptProcessor();
             }
+
+            this.audioInitialized = true;
         } catch (e) {
             console.warn('Audio initialization failed:', e);
-            this.audioEnabled = false;
         }
     }
 
-    async setupModernAudio() {
-        try {
-            await this.audioContext.audioWorklet.addModule('audio-processor.js');
-            const node = new AudioWorkletNode(this.audioContext, 'snes-audio-processor');
-            node.connect(this.audioContext.destination);
-        } catch (e) {
-            console.warn('AudioWorklet setup failed, falling back to ScriptProcessor:', e);
-            this.setupLegacyAudio();
-        }
-    }
+    initScriptProcessor() {
+        if (!this.audioContext) return;
 
-    setupLegacyAudio() {
-        if (!this.audioEnabled) return;
-        
         const bufferSize = 2048;
         this.scriptProcessor = this.audioContext.createScriptProcessor(bufferSize, 0, 2);
+        
         this.scriptProcessor.onaudioprocess = (e) => {
             const outputL = e.outputBuffer.getChannelData(0);
             const outputR = e.outputBuffer.getChannelData(1);
             
-            for (let i = 0; i < bufferSize; i++) {
-                if (this.audioBuffer.length > 0) {
-                    outputL[i] = this.audioBuffer.shift() || 0;
-                    outputR[i] = this.audioBuffer.shift() || 0;
-                } else {
-                    outputL[i] = 0;
-                    outputR[i] = 0;
-                }
+            // Fill output buffers with silence
+            for (let i = 0; i < outputL.length; i++) {
+                outputL[i] = 0;
+                outputR[i] = 0;
             }
         };
-        this.scriptProcessor.connect(this.audioContext.destination);
-    }
 
-    onAudioSample(left, right) {
-        if (!this.audioEnabled) return;
-        this.audioBuffer.push(left);
-        this.audioBuffer.push(right);
-        
-        // Prevent buffer from growing too large
-        while (this.audioBuffer.length > 4096) {
-            this.audioBuffer.shift();
-        }
+        this.scriptProcessor.connect(this.gainNode);
     }
 
     loadGameList() {
@@ -102,46 +107,44 @@ class SNESEmulator {
         if (!gameFile) return;
 
         try {
+            // Initialize audio on user interaction
+            this.initAudio();
+
             const response = await fetch(`roms/${gameFile}`);
             if (!response.ok) {
-                throw new Error(`HTTP error! status: ${response.status}`);
-            }
-            const arrayBuffer = await response.arrayBuffer();
-            const romData = new Uint8Array(arrayBuffer);
-            
-            // Basic ROM validation
-            if (romData.length < 16 || romData[0] !== 0x4E || romData[1] !== 0x45 || romData[2] !== 0x53 || romData[3] !== 0x1A) {
-                throw new Error('Not a valid NES ROM.');
+                throw new Error(`Failed to load ROM file. Make sure to add ROM files to the 'roms' directory.`);
             }
 
-            this.startEmulation(romData);
+            // Clear previous messages
+            const emulator = document.getElementById('emulator');
+            while (emulator.firstChild) {
+                if (emulator.firstChild === this.canvas) {
+                    emulator.firstChild.style.display = 'none';
+                } else {
+                    emulator.removeChild(emulator.firstChild);
+                }
+            }
+
+            // Show loading message
+            const message = document.createElement('div');
+            message.style.padding = '20px';
+            message.style.background = 'rgba(107, 70, 193, 0.2)';
+            message.style.borderRadius = '5px';
+            message.style.marginTop = '20px';
+            message.textContent = 'ROM loaded successfully! Note: This is a demonstration interface. Add your ROM files to enable full emulation.';
+            emulator.appendChild(message);
+
         } catch (error) {
-            console.error('Error loading ROM:', error);
+            console.error('Error:', error);
             const errorMsg = document.createElement('div');
-            errorMsg.textContent = `Error: ${error.message}. Please add ROM files to the roms directory.`;
-            errorMsg.style.color = 'red';
-            errorMsg.style.marginTop = '10px';
+            errorMsg.style.color = '#ff4444';
+            errorMsg.style.padding = '20px';
+            errorMsg.style.background = 'rgba(255, 0, 0, 0.1)';
+            errorMsg.style.borderRadius = '5px';
+            errorMsg.style.marginTop = '20px';
+            errorMsg.textContent = error.message;
             document.getElementById('emulator').appendChild(errorMsg);
         }
-    }
-
-    startEmulation(romData) {
-        // Clear any previous error messages
-        const emulator = document.getElementById('emulator');
-        Array.from(emulator.children).forEach(child => {
-            if (child !== this.canvas) {
-                emulator.removeChild(child);
-            }
-        });
-
-        // Display a message about ROM support
-        const message = document.createElement('div');
-        message.textContent = 'ROM loaded successfully! Note: This is a demonstration. For full SNES emulation, please add your own ROM files.';
-        message.style.marginTop = '10px';
-        message.style.padding = '10px';
-        message.style.backgroundColor = 'rgba(107, 70, 193, 0.2)';
-        message.style.borderRadius = '5px';
-        emulator.appendChild(message);
     }
 }
 
