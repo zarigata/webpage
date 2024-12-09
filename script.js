@@ -390,12 +390,8 @@ class MiniTerminal {
                 const command = this.input.value.trim().toLowerCase();
                 this.input.value = '';
                 
-                // Easter egg commands
-                if (this.commands[command]) {
-                    this.commands[command]();
-                } else if (command) {
-                    this.print(`Command not found: ${command}`);
-                }
+                // Execute the command
+                this.executeCommand(command);
             }
         });
 
