@@ -757,39 +757,102 @@ class MusicPlayer {
     }
 
     setupUVMeter() {
+        let lastTime = Date.now();
+        let peakValues = new Array(32).fill(0);
+        let peakDecay = 2;
+        
         const drawMeter = () => {
             requestAnimationFrame(drawMeter);
             
             const width = this.canvas.width;
             const height = this.canvas.height;
             const barWidth = width / 32;
+            const now = Date.now();
+            const deltaTime = now - lastTime;
+            lastTime = now;
             
             this.analyser.getByteFrequencyData(this.dataArray);
             
-            this.canvasCtx.fillStyle = '#000';
+            // Clear canvas with a slight fade effect
+            this.canvasCtx.fillStyle = 'rgba(0, 0, 0, 0.3)';
             this.canvasCtx.fillRect(0, 0, width, height);
             
-            const gradient = this.canvasCtx.createLinearGradient(0, height, 0, 0);
-            gradient.addColorStop(0, '#ff0000');
-            gradient.addColorStop(0.5, '#ffff00');
-            gradient.addColorStop(1, '#00ff00');
+            // Create multiple gradients for different effects
+            const mainGradient = this.canvasCtx.createLinearGradient(0, height, 0, 0);
+            mainGradient.addColorStop(0, '#ff0000');
+            mainGradient.addColorStop(0.5, '#ffff00');
+            mainGradient.addColorStop(1, '#00ff00');
             
+            const peakGradient = this.canvasCtx.createLinearGradient(0, height, 0, 0);
+            peakGradient.addColorStop(0, '#ff4444');
+            peakGradient.addColorStop(0.5, '#ffff44');
+            peakGradient.addColorStop(1, '#44ff44');
+            
+            // Draw frequency bars and peaks
             for (let i = 0; i < this.analyser.frequencyBinCount; i++) {
-                const barHeight = (this.dataArray[i] / 255) * height;
+                const value = this.dataArray[i];
+                const barHeight = (value / 255) * height;
                 
-                this.canvasCtx.fillStyle = gradient;
+                // Update peak values
+                if (barHeight > peakValues[i]) {
+                    peakValues[i] = barHeight;
+                } else {
+                    peakValues[i] = Math.max(0, peakValues[i] - peakDecay);
+                }
+                
+                // Draw main bar with glow effect
+                this.canvasCtx.fillStyle = mainGradient;
+                this.canvasCtx.shadowBlur = 15;
+                this.canvasCtx.shadowColor = `hsl(${(i * 360 / 32) % 360}, 100%, 50%)`;
                 this.canvasCtx.fillRect(
                     i * barWidth,
                     height - barHeight,
                     barWidth - 1,
                     barHeight
                 );
+                
+                // Draw peak marker
+                this.canvasCtx.fillStyle = peakGradient;
+                this.canvasCtx.shadowBlur = 10;
+                this.canvasCtx.fillRect(
+                    i * barWidth,
+                    height - peakValues[i] - 2,
+                    barWidth - 1,
+                    4
+                );
             }
             
+            // Reset shadow effect
+            this.canvasCtx.shadowBlur = 0;
+            
             // Add scan line effect
-            const scanLinePos = (Date.now() % 2000) / 2000 * height;
-            this.canvasCtx.fillStyle = 'rgba(255, 255, 255, 0.1)';
-            this.canvasCtx.fillRect(0, scanLinePos, width, 2);
+            const scanLinePos = (Date.now() % 1000) / 1000 * height;
+            const scanGradient = this.canvasCtx.createLinearGradient(0, scanLinePos - 5, 0, scanLinePos + 5);
+            scanGradient.addColorStop(0, 'rgba(255, 255, 255, 0)');
+            scanGradient.addColorStop(0.5, 'rgba(255, 255, 255, 0.3)');
+            scanGradient.addColorStop(1, 'rgba(255, 255, 255, 0)');
+            this.canvasCtx.fillStyle = scanGradient;
+            this.canvasCtx.fillRect(0, scanLinePos - 5, width, 10);
+            
+            // Add grid effect
+            this.canvasCtx.strokeStyle = 'rgba(255, 255, 255, 0.1)';
+            this.canvasCtx.lineWidth = 1;
+            
+            // Vertical grid lines
+            for (let i = 0; i < width; i += barWidth * 2) {
+                this.canvasCtx.beginPath();
+                this.canvasCtx.moveTo(i, 0);
+                this.canvasCtx.lineTo(i, height);
+                this.canvasCtx.stroke();
+            }
+            
+            // Horizontal grid lines
+            for (let i = 0; i < height; i += height / 8) {
+                this.canvasCtx.beginPath();
+                this.canvasCtx.moveTo(0, i);
+                this.canvasCtx.lineTo(width, i);
+                this.canvasCtx.stroke();
+            }
         };
         
         drawMeter();
