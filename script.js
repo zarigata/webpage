@@ -28,58 +28,65 @@ glitchText.addEventListener('mouseout', function() {
     this.style.textShadow = '';
 });
 
-// Burning cursor effect with particles
+// Digital cursor effect with matrix-like trails
 const cursor = document.querySelector('.cursor');
-const maxTrails = 30; // Increased number of trails
+const maxTrails = 20;
 const trails = [];
 let mouseX = 0;
 let mouseY = 0;
 
-// Create initial trail elements with different colors
-const colors = [
-    'rgba(107, 70, 193, 0.3)',
-    'rgba(159, 122, 234, 0.3)',
-    'rgba(26, 54, 93, 0.3)'
-];
+// Create the main cursor as an asterisk
+cursor.innerHTML = '*';
+cursor.style.fontSize = '24px';
+cursor.style.fontWeight = 'bold';
+cursor.style.color = '#00ff00';
+cursor.style.textShadow = '0 0 10px #00ff00';
+
+// Create digital trails with matrix-like characters
+const matrixChars = '01アァカサタナハマヤャラワガザダバパイィキシチニヒミリヰギジヂビピウゥクスツヌフムユュルグズブヅプエェケセテネヘメレヱゲゼデベペオォコソトノホモヨョロヲゴゾドボポヴッン';
 
 for (let i = 0; i < maxTrails; i++) {
     const trail = document.createElement('div');
     trail.className = 'cursor-trail';
-    trail.style.backgroundColor = colors[i % colors.length];
+    trail.style.color = '#00ff00';
+    trail.style.fontSize = '16px';
+    trail.style.fontFamily = 'monospace';
+    trail.style.textShadow = '0 0 5px #00ff00';
     document.body.appendChild(trail);
     trails.push({
         element: trail,
         x: 0,
         y: 0,
         alpha: 0,
-        angle: (i / maxTrails) * Math.PI * 2
+        char: matrixChars[Math.floor(Math.random() * matrixChars.length)]
     });
 }
 
-// Update cursor and trail positions with spiral effect
+// Update cursor and trail positions with digital rain effect
 document.addEventListener('mousemove', (e) => {
     mouseX = e.clientX;
     mouseY = e.clientY;
     
-    cursor.style.left = mouseX + 'px';
-    cursor.style.top = mouseY + 'px';
+    cursor.style.left = (mouseX - 12) + 'px';
+    cursor.style.top = (mouseY - 12) + 'px';
 
-    // Update trail positions with spiral and delay
+    // Update trail positions with digital rain effect
     trails.forEach((trail, index) => {
         setTimeout(() => {
-            const radius = index * 2;
-            const speed = index * 0.02;
-            trail.angle += speed;
+            // Change character randomly
+            if (Math.random() > 0.9) {
+                trail.char = matrixChars[Math.floor(Math.random() * matrixChars.length)];
+            }
             
-            trail.x = mouseX + Math.cos(trail.angle) * radius;
-            trail.y = mouseY + Math.sin(trail.angle) * radius;
+            trail.x = mouseX + (Math.random() - 0.5) * 50;
+            trail.y = mouseY + index * 20;
             trail.alpha = 1 - (index / maxTrails);
             
-            trail.element.style.left = trail.x + 'px';
+            trail.element.textContent = trail.char;
+            trail.element.style.left = (trail.x - 8) + 'px';
             trail.element.style.top = trail.y + 'px';
             trail.element.style.opacity = trail.alpha;
-            trail.element.style.transform = `scale(${1 - (index / maxTrails)}) rotate(${trail.angle * 57.2958}deg)`;
-        }, index * 30);
+        }, index * 50);
     });
 });
 
