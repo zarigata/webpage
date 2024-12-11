@@ -329,15 +329,18 @@ class MiniTerminal {
             },
             'crazy': () => {
                 this.print('INITIATING CHAOS MODE!');
+                this.print('PREPARE FOR 3 MINUTES OF MADNESS!');
                 
                 // Add crazy effects class to body
                 document.body.classList.add('crazy-mode');
                 
                 // Make elements go crazy
                 const elements = document.querySelectorAll('button, a, img, .terminal, h1, p');
+                const animations = [];
+                
                 elements.forEach(el => {
                     el.style.transition = 'all 0.5s';
-                    setInterval(() => {
+                    const animation = setInterval(() => {
                         const x = Math.random() * (window.innerWidth - el.offsetWidth);
                         const y = Math.random() * (window.innerHeight - el.offsetHeight);
                         const rotation = Math.random() * 360;
@@ -345,6 +348,7 @@ class MiniTerminal {
                         el.style.transform = `translate(${x}px, ${y}px) rotate(${rotation}deg) scale(${scale})`;
                         el.style.filter = `hue-rotate(${Math.random() * 360}deg)`;
                     }, 1000);
+                    animations.push(animation);
                 });
 
                 // Add fire effect
@@ -363,10 +367,39 @@ class MiniTerminal {
                 audio.loop = true;
                 audio.play();
 
-                // Return to normal after 10 seconds
+                // Countdown display
+                const countdown = document.createElement('div');
+                countdown.style.position = 'fixed';
+                countdown.style.top = '20px';
+                countdown.style.right = '20px';
+                countdown.style.fontSize = '24px';
+                countdown.style.color = '#ff0';
+                countdown.style.textShadow = '0 0 10px #f00';
+                countdown.style.zIndex = '9999';
+                document.body.appendChild(countdown);
+
+                let timeLeft = 180; // 3 minutes in seconds
+                const countdownInterval = setInterval(() => {
+                    const minutes = Math.floor(timeLeft / 60);
+                    const seconds = timeLeft % 60;
+                    countdown.textContent = `CHAOS MODE: ${minutes}:${seconds.toString().padStart(2, '0')}`;
+                    timeLeft--;
+
+                    if (timeLeft < 0) {
+                        clearInterval(countdownInterval);
+                    }
+                }, 1000);
+
+                // Return to normal after 3 minutes and refresh
                 setTimeout(() => {
+                    // Clear all intervals
+                    animations.forEach(interval => clearInterval(interval));
+                    clearInterval(countdownInterval);
+                    
+                    // Remove effects
                     document.body.classList.remove('crazy-mode');
                     fire.remove();
+                    countdown.remove();
                     elements.forEach(el => {
                         el.style.transform = '';
                         el.style.filter = '';
@@ -376,8 +409,15 @@ class MiniTerminal {
                         text.style.animation = '';
                     });
                     audio.pause();
-                    this.print('Chaos mode deactivated... returning to normal');
-                }, 10000);
+                    
+                    this.print('Chaos mode deactivating...');
+                    this.print('Preparing for system reboot...');
+                    
+                    // Add a short delay before refresh
+                    setTimeout(() => {
+                        window.location.reload();
+                    }, 2000);
+                }, 180000); // 3 minutes = 180000 milliseconds
             },
             'nes': () => {
                 this.print('Launching SNES Emulator...');
