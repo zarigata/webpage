@@ -1,5 +1,6 @@
 <!DOCTYPE html>
 <html lang="en">
+
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
@@ -17,7 +18,7 @@
             min-height: 100vh;
             overflow: hidden;
         }
-        
+
         #dosbox {
             width: 800px;
             height: 600px;
@@ -26,27 +27,27 @@
             margin: 20px;
             background-color: #000;
         }
-        
+
         .dosbox-overlay {
             background-image: url('https://upload.wikimedia.org/wikipedia/en/5/57/Doom_cover_art.jpg');
             background-size: cover;
         }
-        
+
         .dosbox-loader {
             background-color: #000 !important;
             box-shadow: 0 0 10px #f00 !important;
         }
-        
+
         .dosbox-loader-message {
             color: #f00 !important;
             font-family: 'Courier New', monospace !important;
         }
-        
+
         .controls {
             margin: 20px;
             text-align: center;
         }
-        
+
         button {
             background: #000;
             color: #f00;
@@ -57,19 +58,19 @@
             transition: all 0.3s ease;
             margin: 0 10px;
         }
-        
+
         button:hover {
             background: #f00;
             color: #000;
         }
-        
+
         .instructions {
             color: #f00;
             text-align: center;
             margin: 20px;
             max-width: 600px;
         }
-        
+
         .back-button {
             position: fixed;
             top: 20px;
@@ -83,17 +84,18 @@
         }
     </style>
 </head>
+
 <body>
     <button class="back-button" onclick="window.location.href='../'">← Back to Terminal</button>
-    
+
     <div id="dosbox"></div>
     <div id="status">Loading...</div>
-    
+
     <div class="controls">
         <button onclick="dosbox.requestFullscreen()">Fullscreen</button>
         <button onclick="location.reload()">Restart Game</button>
     </div>
-    
+
     <div class="instructions">
         <h3>Controls:</h3>
         <p>Move: Arrow Keys</p>
@@ -103,31 +105,29 @@
         <p>Use/Open: Space</p>
     </div>
 
-    <script src="https://unpkg.com/js-dos@7.5.0/dist/js-dos.js"></script>
+    <script src="https://js-dos.com/6.22/current/js-dos.js"></script>
     <script>
         const status = document.getElementById('status');
-        let dosbox = null;
 
-        // Initialize js-dos
-        emulators.pathPrefix = "https://unpkg.com/js-dos@7.5.0/dist/";
+        Dos(document.getElementById("dosbox"), {
+            wdosboxUrl: "https://js-dos.com/6.22/current/wdosbox.js",
+        }).ready((fs, main) => {
+            status.innerHTML = "Downloading DOOM...";
 
-        Dos(document.getElementById("dosbox"))
-            .then(dos => {
-                dosbox = dos;
-                status.innerHTML = "Loading DOOM...";
-                
-                return dos.extract("https://js-dos.com/cdn/upload/DOOM-@evilution.zip");
-            })
-            .then(() => {
-                return dosbox.run(["-c", "cd DOOM", "-c", "DOOM.EXE"]);
-            })
-            .then(() => {
-                status.innerHTML = "Game loaded! Press any key to start.";
-            })
-            .catch(error => {
-                status.innerHTML = "Error: " + error;
-                console.error(error);
-            });
+            fs.extract("https://js-dos.com/cdn/upload/DOOM-@evilution.zip")
+                .then(() => {
+                    status.innerHTML = "Starting Game...";
+                    return main(["-c", "cd DOOM", "-c", "DOOM.EXE"]);
+                })
+                .then(() => {
+                    status.innerHTML = "Game Running!";
+                })
+                .catch(error => {
+                    status.innerHTML = "Error: " + error;
+                    console.error(error);
+                });
+        });
     </script>
 </body>
+
 </html>
