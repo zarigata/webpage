@@ -212,18 +212,11 @@ body {
 .social-btn:hover {
     background: rgba(107, 70, 193, 0.1);
     transform: translateY(-3px);
-    box-shadow: 0 0 20px rgba(107, 70, 193, 0.6), inset 0 0 10px rgba(107, 70, 193, 0.4);
-    border-color: var(--hover-color);
-    text-shadow: 0 0 8px var(--hover-color);
+    box-shadow: 0 5px 15px rgba(107, 70, 193, 0.3);
 }
 
 .social-btn:hover i {
-    transform: scale(1.2) rotate(360deg);
-    filter: drop-shadow(0 0 5px var(--text-color));
-}
-
-.social-btn:active {
-    transform: scale(0.98);
+    transform: scale(1.2) rotate(5deg);
 }
 
 .spotify-btn {
@@ -232,9 +225,7 @@ body {
 
 .spotify-btn:hover {
     background: rgba(29, 185, 84, 0.1);
-    box-shadow: 0 0 20px rgba(29, 185, 84, 0.6), inset 0 0 10px rgba(29, 185, 84, 0.4);
-    border-color: #1DB954;
-    text-shadow: 0 0 8px #1DB954;
+    box-shadow: 0 5px 15px rgba(29, 185, 84, 0.3);
 }
 
 .spotify-btn::before {
@@ -250,9 +241,7 @@ body {
 
 .printables-btn:hover {
     background: rgba(255, 107, 107, 0.1);
-    box-shadow: 0 0 20px rgba(255, 107, 107, 0.6), inset 0 0 10px rgba(255, 107, 107, 0.4);
-    border-color: #FF6B6B;
-    text-shadow: 0 0 8px #FF6B6B;
+    box-shadow: 0 5px 15px rgba(255, 107, 107, 0.3);
 }
 
 .printables-btn::before {
@@ -1118,7 +1107,6 @@ body.loaded {
     flex: 1;
     height: 3px;
     -webkit-appearance: none;
-    appearance: none;
     background: var(--primary-color);
     outline: none;
     opacity: 0.7;

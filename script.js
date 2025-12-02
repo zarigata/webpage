@@ -63,74 +63,30 @@ for (let i = 0; i < maxTrails; i++) {
 }
 
 // Update cursor and trail positions with digital rain effect
-// Update cursor and trail positions with digital rain effect
-let cursorX = 0;
-let cursorY = 0;
-
 document.addEventListener('mousemove', (e) => {
-    cursorX = e.clientX;
-    cursorY = e.clientY;
+    mouseX = e.clientX;
+    mouseY = e.clientY;
 
-    cursor.style.left = (cursorX - 12) + 'px';
-    cursor.style.top = (cursorY - 12) + 'px';
-});
+    cursor.style.left = (mouseX - 12) + 'px';
+    cursor.style.top = (mouseY - 12) + 'px';
 
-// Animate trails independently
-function animateTrails() {
+    // Update trail positions with digital rain effect
     trails.forEach((trail, index) => {
-        // Initialize trail position if not set
-        if (!trail.active) {
-            trail.x = cursorX + (Math.random() - 0.5) * 60;
-            trail.y = cursorY + (Math.random() - 0.5) * 60;
-            trail.active = true;
-            trail.speed = 2 + Math.random() * 3;
-            trail.life = 1.0;
-        }
+        setTimeout(() => {
+            // Change character randomly
+            if (Math.random() > 0.9) {
+                trail.char = matrixChars[Math.floor(Math.random() * matrixChars.length)];
+            }
 
-        // Make trail fall
-        trail.y += trail.speed;
-        trail.life -= 0.02;
+            trail.x = mouseX + (Math.random() - 0.5) * 50;
+            trail.y = mouseY + index * 20;
+            trail.alpha = 1 - (index / maxTrails);
 
-        // Reset if fade out
-        if (trail.life <= 0) {
-            trail.active = false;
-            trail.life = 0;
-        }
-
-        // Random character change
-        if (Math.random() > 0.9) {
-            trail.char = matrixChars[Math.floor(Math.random() * matrixChars.length)];
-        }
-
-        trail.element.textContent = trail.char;
-        trail.element.style.left = trail.x + 'px';
-        trail.element.style.top = trail.y + 'px';
-        trail.element.style.opacity = trail.life * (1 - (index / maxTrails) * 0.5);
-    });
-
-    requestAnimationFrame(animateTrails);
-}
-animateTrails();
-
-// Magnetic Buttons Effect
-const buttons = document.querySelectorAll('.social-btn');
-buttons.forEach(btn => {
-    btn.addEventListener('mousemove', (e) => {
-        const rect = btn.getBoundingClientRect();
-        const x = e.clientX - rect.left;
-        const y = e.clientY - rect.top;
-
-        const centerX = rect.width / 2;
-        const centerY = rect.height / 2;
-
-        const deltaX = (x - centerX) / 8;
-        const deltaY = (y - centerY) / 8;
-
-        btn.style.transform = `translate(${deltaX}px, ${deltaY}px) scale(1.05)`;
-    });
-
-    btn.addEventListener('mouseleave', () => {
-        btn.style.transform = '';
+            trail.element.textContent = trail.char;
+            trail.element.style.left = (trail.x - 8) + 'px';
+            trail.element.style.top = trail.y + 'px';
+            trail.element.style.opacity = trail.alpha;
+        }, index * 50);
     });
 });
 
