@@ -591,9 +591,19 @@ class MusicPlayer {
         this.minimizeBtn = document.getElementById('minimize-player');
         this.closeBtn = document.getElementById('close-player');
 
-        // Set initial canvas size
-        this.canvas.width = this.canvas.offsetWidth;
-        this.canvas.height = this.canvas.offsetHeight;
+        // Set initial canvas size and handle resizing
+        const resizeObserver = new ResizeObserver(entries => {
+            for (const entry of entries) {
+                // Use contentRect for precise dimensions
+                const { width, height } = entry.contentRect;
+                // Only update if dimensions are valid to avoid clearing canvas unnecessarily
+                if (width > 0 && height > 0) {
+                    this.canvas.width = width;
+                    this.canvas.height = height;
+                }
+            }
+        });
+        resizeObserver.observe(this.canvas.parentElement);
 
         // Window controls
         this.closeBtn.addEventListener('click', () => {
