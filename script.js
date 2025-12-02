@@ -462,8 +462,204 @@ class FileSystem {
         return `write: cannot write to '${path}'`;
     }
 
-    getPWD() {
-        return '/' + this.currentPath.join('/');
+// Clicky Game Logic
+class ClickyGame {
+    constructor() {
+        this.bits = 0;
+        this.totalBits = 0;
+        this.bps = 0;
+        this.clickValue = 1;
+        this.upgrades = {};
+
+        this.upgradeConfig = {
+            'script-kiddie': { name: 'Script Kiddie', cost: 15, rate: 0.1, desc: 'A beginner script to automate clicks.' },
+            'auto-paster': { name: 'Auto-Paster', cost: 100, rate: 1, desc: 'Copies code from StackOverflow automatically.' },
+            'gpu-miner': { name: 'GPU Miner', cost: 1100, rate: 8, desc: 'Uses spare GPU cycles to mine bits.' },
+            'botnet': { name: 'Botnet', cost: 12000, rate: 47, desc: 'A network of infected toasters working for you.' },
+            'ai-core': { name: 'AI Core', cost: 130000, rate: 260, desc: 'A sentient AI dedicated to generating bits.' },
+            'quantum-rig': { name: 'Quantum Rig', cost: 1400000, rate: 1400, desc: 'Computes bits in parallel universes.' },
+            'dyson-sphere': { name: 'Dyson Sphere', cost: 20000000, rate: 7800, desc: 'Harnesses a star for pure computing power.' },
+            'reality-glitch': { name: 'Reality Glitch', cost: 330000000, rate: 44000, desc: 'Breaks the simulation to spawn bits.' }
+        };
+
+        // Initialize upgrades count
+        for (let id in this.upgradeConfig) {
+            this.upgrades[id] = 0;
+        }
+
+        this.ui = {
+            game: document.getElementById('clicky-game'),
+            closeBtn: document.getElementById('close-game'),
+            bigButton: document.getElementById('big-button'),
+            bitsDisplay: document.getElementById('bits-count'),
+            bpsDisplay: document.getElementById('bps-count'),
+            upgradesList: document.getElementById('upgrades-list')
+        };
+
+        this.setupEventListeners();
+        this.load();
+        this.renderUpgrades();
+
+        // Game Loop
+        setInterval(() => this.update(), 100);
+        // Auto-save every 30s
+        setInterval(() => this.save(), 30000);
+    }
+
+    setupEventListeners() {
+        if (this.ui.closeBtn) this.ui.closeBtn.addEventListener('click', () => this.hide());
+        if (this.ui.bigButton) this.ui.bigButton.addEventListener('click', (e) => this.handleClick(e));
+    }
+
+    handleClick(e) {
+        this.addBits(this.clickValue);
+        this.createParticles(e.clientX, e.clientY, `+${this.clickValue}`);
+
+        // Click animation
+        this.ui.bigButton.style.transform = 'scale(0.95)';
+        setTimeout(() => this.ui.bigButton.style.transform = 'scale(1)', 50);
+    }
+
+    addBits(amount) {
+        this.bits += amount;
+        this.totalBits += amount;
+        this.updateUI();
+    }
+
+    buyUpgrade(id) {
+        const upgrade = this.upgradeConfig[id];
+        const cost = this.getCost(id);
+
+        if (this.bits >= cost) {
+            this.bits -= cost;
+            this.upgrades[id]++;
+            this.recalculateBPS();
+            this.updateUI();
+            this.renderUpgrades(); // Re-render to update costs
+            this.save();
+        }
+    }
+
+    getCost(id) {
+        const baseCost = this.upgradeConfig[id].cost;
+        const count = this.upgrades[id];
+        return Math.floor(baseCost * Math.pow(1.15, count));
+    }
+
+    recalculateBPS() {
+        let bps = 0;
+        for (let id in this.upgrades) {
+            bps += this.upgrades[id] * this.upgradeConfig[id].rate;
+        }
+        this.bps = bps;
+    }
+
+    update() {
+        if (this.bps > 0) {
+            this.addBits(this.bps / 10); // Called every 100ms
+        }
+    }
+
+    updateUI() {
+        if (this.ui.bitsDisplay) this.ui.bitsDisplay.textContent = Math.floor(this.bits).toLocaleString();
+        if (this.ui.bpsDisplay) this.ui.bpsDisplay.textContent = this.bps.toFixed(1).toLocaleString();
+
+        // Update upgrade buttons state
+        for (let id in this.upgradeConfig) {
+            const el = document.getElementById(`upgrade-${id}`);
+            if (el) {
+                const cost = this.getCost(id);
+                if (this.bits >= cost) {
+                    el.classList.remove('disabled');
+                } else {
+                    el.classList.add('disabled');
+                }
+            }
+        }
+    }
+
+    renderUpgrades() {
+        if (!this.ui.upgradesList) return;
+
+        this.ui.upgradesList.innerHTML = '';
+        for (let id in this.upgradeConfig) {
+            const u = this.upgradeConfig[id];
+            const cost = this.getCost(id);
+            const count = this.upgrades[id];
+
+            const div = document.createElement('div');
+            div.id = `upgrade-${id}`;
+            div.className = `upgrade-item ${this.bits < cost ? 'disabled' : ''}`;
+            div.innerHTML = `
+                <div class="upgrade-info">
+                    <h4>${u.name} <span style="font-size:0.8em; color:#888">x${count}</span></h4>
+                    <p>${u.desc}</p>
+                    <p style="color: #00ff00">+${u.rate} bps</p>
+                </div>
+                <div class="upgrade-cost">${cost.toLocaleString()} Bits</div>
+            `;
+            div.onclick = () => this.buyUpgrade(id);
+            this.ui.upgradesList.appendChild(div);
+        }
+    }
+
+    createParticles(x, y, text) {
+        const particle = document.createElement('div');
+        particle.className = 'click-particle';
+        particle.textContent = text;
+        particle.style.left = `${x}px`;
+        particle.style.top = `${y}px`;
+        document.body.appendChild(particle);
+        setTimeout(() => particle.remove(), 1000);
+    }
+
+    save() {
+        const data = {
+            bits: this.bits,
+            totalBits: this.totalBits,
+            upgrades: this.upgrades,
+            startTime: Date.now()
+        };
+        localStorage.setItem('zarigata_clicky_save', JSON.stringify(data));
+    }
+
+    load() {
+        const save = localStorage.getItem('zarigata_clicky_save');
+        if (save) {
+            try {
+                const data = JSON.parse(save);
+                this.bits = data.bits || 0;
+                this.totalBits = data.totalBits || 0;
+                this.upgrades = data.upgrades || this.upgrades;
+
+                // Calculate offline progress
+                if (data.startTime) {
+                    this.recalculateBPS();
+                    const now = Date.now();
+                    const diff = (now - data.startTime) / 1000;
+                    if (diff > 0 && this.bps > 0) {
+                        const offlineBits = diff * this.bps;
+                        this.bits += offlineBits;
+                        this.totalBits += offlineBits;
+                        console.log(`Offline progress: +${offlineBits.toFixed(0)} bits`);
+                    }
+                }
+
+                this.recalculateBPS();
+                this.updateUI();
+            } catch (e) {
+                console.error('Save file corrupted', e);
+            }
+        }
+    }
+
+    show() {
+        this.ui.game.classList.remove('hidden');
+    }
+
+    hide() {
+        this.ui.game.classList.add('hidden');
+        document.getElementById('mini-terminal').classList.remove('hidden');
     }
 }
 
@@ -476,6 +672,7 @@ class MiniTerminal {
         this.prompt = document.querySelector('.prompt');
         this.clickCount = 0;
         this.fs = new FileSystem();
+        this.clickyGame = new ClickyGame();
 
         this.commands = {
             'help': () => this.showHelp(),
@@ -497,6 +694,10 @@ class MiniTerminal {
             'edit': (args) => this.editFile(args[0]),
             'run': (args) => this.runFile(args[0]),
             './': (args, cmd) => this.runFile(cmd.substring(2)),
+            'clicky': () => {
+                this.hide();
+                this.clickyGame.show();
+            },
             'duke': () => {
                 this.print('Initializing Duke Nukem 3D...');
                 setTimeout(() => window.location.href = 'duke/index.html', 1000);
