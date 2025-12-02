@@ -139,32 +139,49 @@ function animateStars() {
 animateStars();
 
 // Update cursor and trail positions with digital rain effect
+let cursorHistory = Array(maxTrails * 2).fill({ x: 0, y: 0 });
+
 document.addEventListener('mousemove', (e) => {
     mouseX = e.clientX;
     mouseY = e.clientY;
 
-    cursor.style.left = (mouseX - 16) + 'px'; // Center the 32px cursor
+    cursor.style.left = (mouseX - 16) + 'px';
     cursor.style.top = (mouseY - 16) + 'px';
-
-    // Update trail positions with digital rain effect
-    trails.forEach((trail, index) => {
-        setTimeout(() => {
-            // Change character randomly
-            if (Math.random() > 0.9) {
-                trail.char = matrixChars[Math.floor(Math.random() * matrixChars.length)];
-            }
-
-            trail.x = mouseX + (Math.random() - 0.5) * 50;
-            trail.y = mouseY + index * 20;
-            trail.alpha = 1 - (index / maxTrails);
-
-            trail.element.textContent = trail.char;
-            trail.element.style.left = (trail.x - 8) + 'px';
-            trail.element.style.top = trail.y + 'px';
-            trail.element.style.opacity = trail.alpha;
-        }, index * 50);
-    });
 });
+
+function updateTrails() {
+    // Update history
+    cursorHistory.unshift({ x: mouseX, y: mouseY });
+    if (cursorHistory.length > maxTrails * 5) {
+        cursorHistory.pop();
+    }
+
+    // Update trails
+    trails.forEach((trail, index) => {
+        // Change character randomly
+        if (Math.random() > 0.9) {
+            trail.char = matrixChars[Math.floor(Math.random() * matrixChars.length)];
+        }
+
+        // Get position from history with delay
+        // Use a larger delay factor for visible trailing
+        const historyIndex = Math.min(index * 2, cursorHistory.length - 1);
+        const pos = cursorHistory[historyIndex] || cursorHistory[cursorHistory.length - 1];
+
+        trail.x = pos.x + (Math.random() - 0.5) * 10; // Reduced jitter
+        trail.y = pos.y + index * 5; // Vertical offset
+        trail.alpha = 1 - (index / maxTrails);
+
+        trail.element.textContent = trail.char;
+        trail.element.style.left = (trail.x - 8) + 'px';
+        trail.element.style.top = trail.y + 'px';
+        trail.element.style.opacity = trail.alpha;
+    });
+
+    requestAnimationFrame(updateTrails);
+}
+
+updateTrails();
 
 // Random glitch effect for the image
 const glitchImage = document.querySelector('.glitch-image');
