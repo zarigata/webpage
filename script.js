@@ -35,6 +35,13 @@ const trails = [];
 let mouseX = 0;
 let mouseY = 0;
 
+// Create the main cursor as an asterisk
+cursor.innerHTML = '*';
+cursor.style.fontSize = '24px';
+cursor.style.fontWeight = 'bold';
+cursor.style.color = '#00ff00';
+cursor.style.textShadow = '0 0 10px #00ff00';
+
 // Create digital trails with matrix-like characters
 const matrixChars = '01アァカサタナハマヤャラワガザダバパイィキシチニヒミリヰギジヂビピウゥクスツヌフムユュルグズブヅプエェケセテネヘメレヱゲゼデベペオォコソトノホモヨョロヲゴゾドボポヴッン';
 
@@ -55,133 +62,33 @@ for (let i = 0; i < maxTrails; i++) {
     });
 }
 
-// Star Field Implementation
-const canvas = document.createElement('canvas');
-canvas.style.position = 'fixed';
-canvas.style.top = '0';
-canvas.style.left = '0';
-canvas.style.width = '100%';
-canvas.style.height = '100%';
-canvas.style.zIndex = '-1';
-canvas.style.pointerEvents = 'none';
-document.body.appendChild(canvas);
-
-const ctx = canvas.getContext('2d');
-let stars = [];
-const numStars = 200;
-
-function resizeCanvas() {
-    canvas.width = window.innerWidth;
-    canvas.height = window.innerHeight;
-}
-
-window.addEventListener('resize', resizeCanvas);
-resizeCanvas();
-
-class Star {
-    constructor() {
-        this.x = Math.random() * canvas.width;
-        this.y = Math.random() * canvas.height;
-        this.z = Math.random() * 2; // Depth
-        this.size = Math.random() * 2;
-        this.baseX = this.x;
-        this.baseY = this.y;
-    }
-
-    update() {
-        // Parallax/Repel effect
-        const dx = mouseX - this.x;
-        const dy = mouseY - this.y;
-        const distance = Math.sqrt(dx * dx + dy * dy);
-        const maxDistance = 200;
-
-        if (distance < maxDistance) {
-            const force = (maxDistance - distance) / maxDistance;
-            const angle = Math.atan2(dy, dx);
-            const moveX = Math.cos(angle) * force * 20 * this.z; // Move away from mouse
-            const moveY = Math.sin(angle) * force * 20 * this.z;
-
-            this.x -= moveX * 0.1;
-            this.y -= moveY * 0.1;
-        } else {
-            // Return to base position
-            this.x += (this.baseX - this.x) * 0.05;
-            this.y += (this.baseY - this.y) * 0.05;
-        }
-
-        // Twinkle
-        if (Math.random() > 0.95) {
-            this.size = Math.random() * 2;
-        }
-    }
-
-    draw() {
-        ctx.fillStyle = `rgba(255, 255, 255, ${Math.random() * 0.5 + 0.5})`;
-        ctx.beginPath();
-        ctx.arc(this.x, this.y, this.size, 0, Math.PI * 2);
-        ctx.fill();
-    }
-}
-
-for (let i = 0; i < numStars; i++) {
-    stars.push(new Star());
-}
-
-function animateStars() {
-    ctx.clearRect(0, 0, canvas.width, canvas.height);
-    stars.forEach(star => {
-        star.update();
-        star.draw();
-    });
-    requestAnimationFrame(animateStars);
-}
-
-animateStars();
-
 // Update cursor and trail positions with digital rain effect
-let cursorHistory = Array(maxTrails * 2).fill({ x: 0, y: 0 });
-
 document.addEventListener('mousemove', (e) => {
     mouseX = e.clientX;
     mouseY = e.clientY;
 
-    cursor.style.left = (mouseX - 16) + 'px';
-    cursor.style.top = (mouseY - 16) + 'px';
-});
+    cursor.style.left = (mouseX - 12) + 'px';
+    cursor.style.top = (mouseY - 12) + 'px';
 
-function updateTrails() {
-    // Update history
-    cursorHistory.unshift({ x: mouseX, y: mouseY });
-    if (cursorHistory.length > maxTrails * 5) {
-        cursorHistory.pop();
-    }
-
-    // Update trails
+    // Update trail positions with digital rain effect
     trails.forEach((trail, index) => {
-        // Change character randomly
-        if (Math.random() > 0.9) {
-            trail.char = matrixChars[Math.floor(Math.random() * matrixChars.length)];
-        }
+        setTimeout(() => {
+            // Change character randomly
+            if (Math.random() > 0.9) {
+                trail.char = matrixChars[Math.floor(Math.random() * matrixChars.length)];
+            }
 
-        // Get position from history with delay
-        // Use a larger delay factor for visible trailing
-        const historyIndex = Math.min(index * 2, cursorHistory.length - 1);
-        const pos = cursorHistory[historyIndex] || cursorHistory[cursorHistory.length - 1];
+            trail.x = mouseX + (Math.random() - 0.5) * 50;
+            trail.y = mouseY + index * 20;
+            trail.alpha = 1 - (index / maxTrails);
 
-        trail.x = pos.x + (Math.random() - 0.5) * 10; // Reduced jitter
-        trail.y = pos.y + index * 5; // Vertical offset
-        trail.alpha = 1 - (index / maxTrails);
-
-        trail.element.textContent = trail.char;
-        trail.element.style.left = (trail.x - 8) + 'px';
-        trail.element.style.top = trail.y + 'px';
-        trail.element.style.opacity = trail.alpha;
+            trail.element.textContent = trail.char;
+            trail.element.style.left = (trail.x - 8) + 'px';
+            trail.element.style.top = trail.y + 'px';
+            trail.element.style.opacity = trail.alpha;
+        }, index * 50);
     });
-
-    requestAnimationFrame(updateTrails);
-}
-
-updateTrails();
+});
 
 // Random glitch effect for the image
 const glitchImage = document.querySelector('.glitch-image');
