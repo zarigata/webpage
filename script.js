@@ -295,173 +295,325 @@ class ScrollingText {
 }
 
 // Logo Easter Egg
+// Virtual File System
+class FileSystem {
+    constructor() {
+        this.root = {
+            type: 'dir',
+            children: {
+                'home': {
+                    type: 'dir',
+                    children: {
+                        'user': {
+                            type: 'dir',
+                            children: {
+                                'documents': { type: 'dir', children: {} },
+                                'downloads': { type: 'dir', children: {} },
+                                'welcome.txt': { type: 'file', content: 'Welcome to ZarigataOS v1.0.0\nFeel free to explore!' }
+                            }
+                        }
+                    }
+                },
+                'bin': {
+                    type: 'dir',
+                    children: {}
+                },
+                'etc': {
+                    type: 'dir',
+                    children: {
+                        'motd': { type: 'file', content: 'ZarigataOS - Systems Online' }
+                    }
+                }
+            }
+        };
+        this.currentPath = ['home', 'user'];
+    }
+
+    resolvePath(path) {
+        if (path === '/') return [];
+        if (path === '~') return ['home', 'user'];
+
+        let parts = path.split('/').filter(p => p);
+        let current = path.startsWith('/') ? [] : [...this.currentPath];
+
+        for (let part of parts) {
+            if (part === '.') continue;
+            if (part === '..') {
+                if (current.length > 0) current.pop();
+            } else {
+                current.push(part);
+            }
+        }
+        return current;
+    }
+
+    getNode(pathArr) {
+        let node = this.root;
+        for (let part of pathArr) {
+            if (node.type !== 'dir' || !node.children[part]) return null;
+            node = node.children[part];
+        }
+        return node;
+    }
+
+    ls(path = '') {
+        let targetPath = path ? this.resolvePath(path) : this.currentPath;
+        let node = this.getNode(targetPath);
+
+        if (!node) return `ls: cannot access '${path}': No such file or directory`;
+        if (node.type === 'file') return path;
+
+        return Object.entries(node.children).map(([name, item]) => {
+            return item.type === 'dir' ? `<span style="color: #4d4dff">${name}/</span>` : name;
+        }).join('  ');
+    }
+
+    cd(path) {
+        if (!path) {
+            this.currentPath = ['home', 'user'];
+            return '';
+        }
+
+        let targetPath = this.resolvePath(path);
+        let node = this.getNode(targetPath);
+
+        if (!node || node.type !== 'dir') {
+            return `cd: ${path}: No such file or directory`;
+        }
+
+        this.currentPath = targetPath;
+        return '';
+    }
+
+    mkdir(path) {
+        if (!path) return 'mkdir: missing operand';
+
+        let targetPath = this.resolvePath(path);
+        let name = targetPath.pop();
+        let parentPath = targetPath;
+        let parent = this.getNode(parentPath);
+
+        if (!parent || parent.type !== 'dir') return `mkdir: cannot create directory '${path}': No such file or directory`;
+        if (parent.children[name]) return `mkdir: cannot create directory '${path}': File exists`;
+
+        parent.children[name] = { type: 'dir', children: {} };
+        return '';
+    }
+
+    touch(path) {
+        if (!path) return 'touch: missing operand';
+
+        let targetPath = this.resolvePath(path);
+        let name = targetPath.pop();
+        let parentPath = targetPath;
+        let parent = this.getNode(parentPath);
+
+        if (!parent || parent.type !== 'dir') return `touch: cannot touch '${path}': No such file or directory`;
+
+        if (!parent.children[name]) {
+            parent.children[name] = { type: 'file', content: '' };
+        }
+        return '';
+    }
+
+    rm(path) {
+        if (!path) return 'rm: missing operand';
+
+        let targetPath = this.resolvePath(path);
+        let name = targetPath.pop();
+        let parentPath = targetPath;
+        let parent = this.getNode(parentPath);
+
+        if (!parent || parent.type !== 'dir' || !parent.children[name]) {
+            return `rm: cannot remove '${path}': No such file or directory`;
+        }
+
+        delete parent.children[name];
+        return '';
+    }
+
+    cat(path) {
+        if (!path) return 'cat: missing operand';
+
+        let targetPath = this.resolvePath(path);
+        let node = this.getNode(targetPath);
+
+        if (!node) return `cat: ${path}: No such file or directory`;
+        if (node.type === 'dir') return `cat: ${path}: Is a directory`;
+
+        return node.content;
+    }
+
+    writeFile(path, content) {
+        let targetPath = this.resolvePath(path);
+        let node = this.getNode(targetPath);
+
+        if (node && node.type === 'dir') return `write: ${path}: Is a directory`;
+
+        if (!node) {
+            this.touch(path);
+            node = this.getNode(targetPath);
+        }
+
+        if (node) {
+            node.content = content;
+            return '';
+        }
+        return `write: cannot write to '${path}'`;
+    }
+
+    getPWD() {
+        return '/' + this.currentPath.join('/');
+    }
+}
+
+// Logo Easter Egg & Terminal
 class MiniTerminal {
     constructor() {
         this.terminal = document.getElementById('mini-terminal');
         this.output = document.getElementById('terminal-output');
         this.input = document.getElementById('terminal-input');
+        this.prompt = document.querySelector('.prompt');
         this.clickCount = 0;
+        this.fs = new FileSystem();
+
         this.commands = {
             'help': () => this.showHelp(),
             'clear': () => this.clear(),
-            'ls': () => this.listFiles(),
-            'echo': (args) => this.echo(args),
+            'ls': (args) => this.print(this.fs.ls(args[0])),
+            'cd': (args) => {
+                let err = this.fs.cd(args[0]);
+                if (err) this.print(err);
+                this.updatePrompt();
+            },
+            'pwd': () => this.print(this.fs.getPWD()),
+            'mkdir': (args) => this.print(this.fs.mkdir(args[0])),
+            'touch': (args) => this.print(this.fs.touch(args[0])),
+            'rm': (args) => this.print(this.fs.rm(args[0])),
+            'cat': (args) => this.print(this.fs.cat(args[0])),
+            'echo': (args) => this.print(args.join(' ')),
             'whoami': () => this.print('root'),
             'exit': () => this.hide(),
+            'edit': (args) => this.editFile(args[0]),
+            'run': (args) => this.runFile(args[0]),
+            './': (args, cmd) => this.runFile(cmd.substring(2)),
             'duke': () => {
-                // Save current music state
-                const wasPlaying = this.isPlaying;
-                if (wasPlaying) {
-                    this.togglePlay();
-                }
-
-                // Add loading effect
-                const terminal = document.querySelector('.terminal');
-                terminal.innerHTML += '<div class="command-output" style="color: #0ff">Initializing Duke Nukem 3D...</div>';
-                terminal.innerHTML += '<div class="command-output" style="color: #0ff">Prepare to kick ass...</div>';
-                terminal.innerHTML += '<div class="command-output" style="color: #ff0">LET\'S ROCK!</div>';
-
-                // Redirect to Duke page
-                setTimeout(() => {
-                    window.location.href = 'duke/index.html';
-                }, 2000);
-                return;
+                this.print('Initializing Duke Nukem 3D...');
+                setTimeout(() => window.location.href = 'duke/index.html', 1000);
             },
             'doom': () => {
-                // Save current music state
-                const wasPlaying = this.isPlaying;
-                if (wasPlaying) {
-                    this.togglePlay();
-                }
-
-                // Add loading effect
-                const terminal = document.querySelector('.terminal');
-                terminal.innerHTML += '<div class="command-output" style="color: #f00">Initializing DOOM Engine...</div>';
-                terminal.innerHTML += '<div class="command-output" style="color: #f00">Opening portal to hell...</div>';
-                terminal.innerHTML += '<div class="command-output" style="color: #f00">RIP AND TEAR!</div>';
-
-                // Redirect to Doom page
-                setTimeout(() => {
-                    window.location.href = 'doom/index.html';
-                }, 2000);
-                return;
-            },
-            'crazy': () => {
-                this.print('INITIATING CHAOS MODE!');
-                this.print('PREPARE FOR 3 MINUTES OF MADNESS!');
-
-                // Add crazy effects class to body
-                document.body.classList.add('crazy-mode');
-
-                // Make elements go crazy
-                const elements = document.querySelectorAll('button, a, img, .terminal, h1, p');
-                const animations = [];
-
-                elements.forEach(el => {
-                    el.style.transition = 'all 0.5s';
-                    const animation = setInterval(() => {
-                        const x = Math.random() * (window.innerWidth - el.offsetWidth);
-                        const y = Math.random() * (window.innerHeight - el.offsetHeight);
-                        const rotation = Math.random() * 360;
-                        const scale = 0.5 + Math.random();
-                        el.style.transform = `translate(${x}px, ${y}px) rotate(${rotation}deg) scale(${scale})`;
-                        el.style.filter = `hue-rotate(${Math.random() * 360}deg)`;
-                    }, 1000);
-                    animations.push(animation);
-                });
-
-                // Add fire effect
-                const fire = document.createElement('div');
-                fire.className = 'fire-overlay';
-                document.body.appendChild(fire);
-
-                // Crazy text effect
-                const texts = document.querySelectorAll('p, h1, h2, h3, button');
-                texts.forEach(text => {
-                    text.style.animation = 'crazyText 0.1s infinite';
-                });
-
-                // Play crazy sound
-                const audio = new Audio('https://www.myinstants.com/media/sounds/epic-sax-guy-loop.mp3');
-                audio.loop = true;
-                audio.play();
-
-                // Countdown display
-                const countdown = document.createElement('div');
-                countdown.style.position = 'fixed';
-                countdown.style.top = '20px';
-                countdown.style.right = '20px';
-                countdown.style.fontSize = '24px';
-                countdown.style.color = '#ff0';
-                countdown.style.textShadow = '0 0 10px #f00';
-                countdown.style.zIndex = '9999';
-                document.body.appendChild(countdown);
-
-                let timeLeft = 180; // 3 minutes in seconds
-                const countdownInterval = setInterval(() => {
-                    const minutes = Math.floor(timeLeft / 60);
-                    const seconds = timeLeft % 60;
-                    countdown.textContent = `CHAOS MODE: ${minutes}:${seconds.toString().padStart(2, '0')}`;
-                    timeLeft--;
-
-                    if (timeLeft < 0) {
-                        clearInterval(countdownInterval);
-                    }
-                }, 1000);
-
-                // Return to normal after 3 minutes and refresh
-                setTimeout(() => {
-                    // Clear all intervals
-                    animations.forEach(interval => clearInterval(interval));
-                    clearInterval(countdownInterval);
-
-                    // Remove effects
-                    document.body.classList.remove('crazy-mode');
-                    fire.remove();
-                    countdown.remove();
-                    elements.forEach(el => {
-                        el.style.transform = '';
-                        el.style.filter = '';
-                        el.style.transition = '';
-                    });
-                    texts.forEach(text => {
-                        text.style.animation = '';
-                    });
-                    audio.pause();
-
-                    this.print('Chaos mode deactivating...');
-                    this.print('Preparing for system reboot...');
-
-                    // Add a short delay before refresh
-                    setTimeout(() => {
-                        window.location.reload();
-                    }, 2000);
-                }, 180000); // 3 minutes = 180000 milliseconds
+                this.print('Initializing DOOM...');
+                setTimeout(() => window.location.href = 'doom/index.html', 1000);
             },
             'nes': () => {
                 this.print('Launching SNES Emulator...');
-                this.print('Loading game library...');
-
-                setTimeout(() => {
-                    window.location.href = 'snes/index.html';
-                }, 1500);
-            }
+                setTimeout(() => window.location.href = 'snes/index.html', 1000);
+            },
+            'crazy': () => this.activateChaosMode()
         };
+
         this.setupEventListeners();
+        this.updatePrompt();
+    }
+
+    updatePrompt() {
+        this.prompt.textContent = `root@zarigata:${this.fs.getPWD()}$`;
+    }
+
+    editFile(filename) {
+        if (!filename) {
+            this.print('edit: missing filename');
+            return;
+        }
+
+        let content = this.fs.cat(filename);
+        if (content.startsWith('cat:')) content = ''; // New file
+
+        // Simple prompt-based editor for now
+        let newContent = prompt(`Editing ${filename}\nEnter content:`, content);
+
+        if (newContent !== null) {
+            let err = this.fs.writeFile(filename, newContent);
+            if (err) this.print(err);
+            else this.print(`File '${filename}' saved.`);
+        }
+    }
+
+    runFile(filename) {
+        if (!filename) {
+            this.print('run: missing filename');
+            return;
+        }
+
+        let content = this.fs.cat(filename);
+        if (content.startsWith('cat:')) {
+            this.print(content);
+            return;
+        }
+
+        if (filename.endsWith('.js')) {
+            try {
+                this.print(`Executing ${filename}...`);
+                // Safe-ish execution
+                const safeEval = new Function('print', 'alert', 'console', content);
+                safeEval((text) => this.print(text), alert, console);
+            } catch (e) {
+                this.print(`Error executing ${filename}: ${e.message}`);
+            }
+        } else {
+            this.print(`Executing ${filename}...`);
+            this.print(content);
+        }
+    }
+
+    activateChaosMode() {
+        this.print('INITIATING CHAOS MODE!');
+        this.print('PREPARE FOR 3 MINUTES OF MADNESS!');
+
+        document.body.classList.add('crazy-mode');
+
+        const elements = document.querySelectorAll('button, a, img, .terminal, h1, p');
+        const animations = [];
+
+        elements.forEach(el => {
+            el.style.transition = 'all 0.5s';
+            const animation = setInterval(() => {
+                const x = Math.random() * (window.innerWidth - el.offsetWidth);
+                const y = Math.random() * (window.innerHeight - el.offsetHeight);
+                const rotation = Math.random() * 360;
+                const scale = 0.5 + Math.random();
+                el.style.transform = `translate(${x}px, ${y}px) rotate(${rotation}deg) scale(${scale})`;
+                el.style.filter = `hue-rotate(${Math.random() * 360}deg)`;
+            }, 1000);
+            animations.push(animation);
+        });
+
+        const fire = document.createElement('div');
+        fire.className = 'fire-overlay';
+        document.body.appendChild(fire);
+
+        const audio = new Audio('https://www.myinstants.com/media/sounds/epic-sax-guy-loop.mp3');
+        audio.loop = true;
+        audio.play();
+
+        setTimeout(() => {
+            animations.forEach(interval => clearInterval(interval));
+            document.body.classList.remove('crazy-mode');
+            fire.remove();
+            audio.pause();
+            window.location.reload();
+        }, 180000);
     }
 
     setupEventListeners() {
         this.input.addEventListener('keypress', (e) => {
             if (e.key === 'Enter') {
-                const command = this.input.value.trim().toLowerCase();
+                const commandLine = this.input.value.trim();
                 this.input.value = '';
-
-                // Execute the command
-                this.executeCommand(command);
+                this.executeCommand(commandLine);
             }
         });
 
-        // Logo click handler
         const logo = document.querySelector('.profile-card img');
         if (logo) {
             logo.addEventListener('click', () => this.handleLogoClick());
@@ -470,13 +622,10 @@ class MiniTerminal {
 
     handleLogoClick() {
         this.clickCount++;
-
-        // Play beep sound
         const beep = new Audio('data:audio/wav;base64,//uQRAAAAWMSLwUIYAAsYkXgoQwAEaYLWfkWgAI0wWs/ItAAAGDgYtAgAyN+QWaAAihwMWm4G8QQRDiMcCBcH3Cc+CDv/7xA4Tvh9Rz/y8QADBwMWgQAZG/ILNAARQ4GLTcDeIIIhxGOBAuD7hOfBB3/94gcJ3w+o5/5eIAIAAAVwWgQAVQ2ORaIQwEMAJiDg95G4nQL7mQVWI6GwRcfsZAcsKkJvxgxEjzFUgfHoSQ9Qq7KNwqHwuB13MA4a1q/DmBrHgPcmjiGoh//EwC5nGPEmS4RcfkVKOhJf+WOgoxJclFz3kgn//dBA+ya1GhurNn8zb//9NNutNuhz31f////9vt///z+IdAEAAAK4LQIAKobHItEIYCGAExBwe8jcToF9zIKrEdDYIuP2MgOWFSE34wYiR5iqQPj0JIeoVdlG4VD4XA67mAcNa1fhzA1jwHuTRxDUQ//iYBczjHiTJcIuPyKlHQkv/LHQUYkuSi57yQT//uggfZNajQ3Vmz+Zt//+mm3Wm3Q576v////+32///5/EOgAAADVghQAAAAA==');
         beep.play();
 
         if (this.clickCount === 8) {
-            // Add glitch effect to screen
             document.body.classList.add('screen-glitch');
             setTimeout(() => {
                 document.body.classList.remove('screen-glitch');
@@ -498,8 +647,9 @@ class MiniTerminal {
     }
 
     print(text) {
+        if (!text) return;
         const line = document.createElement('div');
-        line.textContent = text;
+        line.innerHTML = text; // Allow HTML for colors
         this.output.appendChild(line);
         this.output.scrollTop = this.output.scrollHeight;
     }
@@ -510,36 +660,38 @@ class MiniTerminal {
 
     showHelp() {
         this.print('Available commands:');
-        this.print('  help    - Show this help message');
-        this.print('  clear   - Clear the terminal');
-        this.print('  ls      - List files');
-        this.print('  echo    - Print text');
-        this.print('  whoami  - Show current user');
-        this.print('  exit    - Close terminal');
-        this.print('  duke    - Play Duke Nukem 3D');
-        this.print('  doom    - Play DOOM');
-        this.print('  (CRAZY) - Enable chaos mode');
-        this.print('  nes     - Play SNES Emulator');
-    }
-
-    listFiles() {
-        this.print('index.html');
-        this.print('style.css');
-        this.print('script.js');
-        this.print('ascii-art.txt');
-    }
-
-    echo(args) {
-        this.print(args.join(' '));
+        this.print('  help     - Show this help message');
+        this.print('  clear    - Clear the terminal');
+        this.print('  ls       - List files');
+        this.print('  cd       - Change directory');
+        this.print('  pwd      - Print working directory');
+        this.print('  mkdir    - Create directory');
+        this.print('  touch    - Create file');
+        this.print('  rm       - Remove file/directory');
+        this.print('  cat      - View file content');
+        this.print('  edit     - Edit/Create file');
+        this.print('  run      - Run file (JS supported)');
+        this.print('  echo     - Print text');
+        this.print('  whoami   - Show current user');
+        this.print('  exit     - Close terminal');
+        this.print('  duke     - Play Duke Nukem 3D');
+        this.print('  doom     - Play DOOM');
+        this.print('  nes      - Play SNES Emulator');
     }
 
     executeCommand(commandLine) {
-        const [cmd, ...args] = commandLine.split(' ');
-        this.print(`root@zarigata:~$ ${commandLine}`);
+        if (!commandLine) return;
+        const parts = commandLine.split(' ');
+        const cmd = parts[0].toLowerCase();
+        const args = parts.slice(1);
+
+        this.print(`<span style="color: #00ff00">root@zarigata:${this.fs.getPWD()}$</span> ${commandLine}`);
 
         if (this.commands[cmd]) {
             this.commands[cmd](args);
-        } else if (cmd) {
+        } else if (commandLine.startsWith('./')) {
+            this.commands['./'](args, commandLine);
+        } else {
             this.print(`Command not found: ${cmd}`);
         }
     }
