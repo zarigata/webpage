@@ -67,10 +67,12 @@ body {
         transform: translate(-50%, -50%) scale(1);
         opacity: 0.8;
     }
+
     50% {
         transform: translate(-50%, -50%) scale(1.5);
         opacity: 0.4;
     }
+
     100% {
         transform: translate(-50%, -50%) scale(1);
         opacity: 0.8;
@@ -93,16 +95,14 @@ body {
     position: relative;
     box-shadow: 0 0 30px rgba(107, 70, 193, 0.4);
     backdrop-filter: blur(10px);
-    clip-path: polygon(
-        0 10px,
-        10px 0,
-        calc(100% - 10px) 0,
-        100% 10px,
-        100% calc(100% - 10px),
-        calc(100% - 10px) 100%,
-        10px 100%,
-        0 calc(100% - 10px)
-    );
+    clip-path: polygon(0 10px,
+            10px 0,
+            calc(100% - 10px) 0,
+            100% 10px,
+            100% calc(100% - 10px),
+            calc(100% - 10px) 100%,
+            10px 100%,
+            0 calc(100% - 10px));
 }
 
 .profile-card::before {
@@ -115,16 +115,14 @@ body {
     background: linear-gradient(45deg, var(--primary-color), var(--secondary-color), var(--hover-color));
     z-index: -1;
     animation: borderGlow 3s linear infinite;
-    clip-path: polygon(
-        0 12px,
-        12px 0,
-        calc(100% - 12px) 0,
-        100% 12px,
-        100% calc(100% - 12px),
-        calc(100% - 12px) 100%,
-        12px 100%,
-        0 calc(100% - 12px)
-    );
+    clip-path: polygon(0 12px,
+            12px 0,
+            calc(100% - 12px) 0,
+            100% 12px,
+            100% calc(100% - 12px),
+            calc(100% - 12px) 100%,
+            12px 100%,
+            0 calc(100% - 12px));
 }
 
 .glitch-wrapper {
@@ -138,7 +136,7 @@ body {
     text-align: center;
     text-transform: uppercase;
     position: relative;
-    text-shadow: 
+    text-shadow:
         0 0 10px var(--primary-color),
         0 0 20px var(--primary-color),
         0 0 40px var(--primary-color),
@@ -200,12 +198,10 @@ body {
     left: -100%;
     width: 100%;
     height: 100%;
-    background: linear-gradient(
-        90deg,
-        transparent,
-        rgba(107, 70, 193, 0.2),
-        transparent
-    );
+    background: linear-gradient(90deg,
+            transparent,
+            rgba(107, 70, 193, 0.2),
+            transparent);
     transition: 0.5s;
 }
 
@@ -216,11 +212,18 @@ body {
 .social-btn:hover {
     background: rgba(107, 70, 193, 0.1);
     transform: translateY(-3px);
-    box-shadow: 0 5px 15px rgba(107, 70, 193, 0.3);
+    box-shadow: 0 0 20px rgba(107, 70, 193, 0.6), inset 0 0 10px rgba(107, 70, 193, 0.4);
+    border-color: var(--hover-color);
+    text-shadow: 0 0 8px var(--hover-color);
 }
 
 .social-btn:hover i {
-    transform: scale(1.2) rotate(5deg);
+    transform: scale(1.2) rotate(360deg);
+    filter: drop-shadow(0 0 5px var(--text-color));
+}
+
+.social-btn:active {
+    transform: scale(0.98);
 }
 
 .spotify-btn {
@@ -229,16 +232,16 @@ body {
 
 .spotify-btn:hover {
     background: rgba(29, 185, 84, 0.1);
-    box-shadow: 0 5px 15px rgba(29, 185, 84, 0.3);
+    box-shadow: 0 0 20px rgba(29, 185, 84, 0.6), inset 0 0 10px rgba(29, 185, 84, 0.4);
+    border-color: #1DB954;
+    text-shadow: 0 0 8px #1DB954;
 }
 
 .spotify-btn::before {
-    background: linear-gradient(
-        90deg,
-        transparent,
-        rgba(29, 185, 84, 0.2),
-        transparent
-    );
+    background: linear-gradient(90deg,
+            transparent,
+            rgba(29, 185, 84, 0.2),
+            transparent);
 }
 
 .printables-btn {
@@ -247,16 +250,16 @@ body {
 
 .printables-btn:hover {
     background: rgba(255, 107, 107, 0.1);
-    box-shadow: 0 5px 15px rgba(255, 107, 107, 0.3);
+    box-shadow: 0 0 20px rgba(255, 107, 107, 0.6), inset 0 0 10px rgba(255, 107, 107, 0.4);
+    border-color: #FF6B6B;
+    text-shadow: 0 0 8px #FF6B6B;
 }
 
 .printables-btn::before {
-    background: linear-gradient(
-        90deg,
-        transparent,
-        rgba(255, 107, 107, 0.2),
-        transparent
-    );
+    background: linear-gradient(90deg,
+            transparent,
+            rgba(255, 107, 107, 0.2),
+            transparent);
 }
 
 .printables-btn i {
@@ -267,6 +270,7 @@ body {
     0% {
         transform: perspective(400px) rotateY(0);
     }
+
     100% {
         transform: perspective(400px) rotateY(360deg);
     }
@@ -289,8 +293,7 @@ body {
     position: relative;
     z-index: 1;
     animation: imageGlitch 0.5s infinite;
-    filter: drop-shadow(0 0 10px var(--primary-color))
-           drop-shadow(0 0 20px var(--hover-color));
+    filter: drop-shadow(0 0 10px var(--primary-color)) drop-shadow(0 0 20px var(--hover-color));
 }
 
 .glitch-image::after {
@@ -300,11 +303,10 @@ body {
     left: -10px;
     right: -10px;
     bottom: -10px;
-    background: linear-gradient(45deg, 
-        rgba(107, 70, 193, 0.5), 
-        rgba(159, 122, 234, 0.5), 
-        rgba(26, 54, 93, 0.5)
-    );
+    background: linear-gradient(45deg,
+            rgba(107, 70, 193, 0.5),
+            rgba(159, 122, 234, 0.5),
+            rgba(26, 54, 93, 0.5));
     filter: blur(20px);
     z-index: -1;
     animation: auraGlow 2s infinite;
@@ -333,20 +335,21 @@ body {
     transform: translate(-50%, -50%);
     width: 120%;
     height: 120%;
-    background: radial-gradient(
-        circle,
-        rgba(107, 70, 193, 0.5) 0%,
-        rgba(26, 54, 93, 0.5) 50%,
-        transparent 70%
-    );
+    background: radial-gradient(circle,
+            rgba(107, 70, 193, 0.5) 0%,
+            rgba(26, 54, 93, 0.5) 50%,
+            transparent 70%);
     animation: auraGlow 2s infinite;
     z-index: 0;
 }
 
 @keyframes borderGlow {
-    0%, 100% {
+
+    0%,
+    100% {
         filter: hue-rotate(0deg) brightness(1);
     }
+
     50% {
         filter: hue-rotate(180deg) brightness(1.2);
     }
@@ -354,14 +357,15 @@ body {
 
 @keyframes textGlow {
     0% {
-        text-shadow: 
+        text-shadow:
             0 0 10px var(--primary-color),
             0 0 20px var(--primary-color),
             0 0 40px var(--primary-color),
             0 0 80px var(--secondary-color);
     }
+
     100% {
-        text-shadow: 
+        text-shadow:
             0 0 5px var(--primary-color),
             0 0 10px var(--primary-color),
             0 0 20px var(--primary-color),
@@ -374,38 +378,48 @@ body {
         transform: translate(0);
         filter: hue-rotate(0deg);
     }
+
     10% {
         transform: translate(-5px, 5px);
         filter: hue-rotate(90deg);
     }
+
     20% {
         transform: translate(5px, -5px);
         filter: hue-rotate(180deg);
     }
+
     30% {
         transform: translate(-3px, 3px);
         filter: hue-rotate(270deg);
     }
+
     40% {
         transform: translate(3px, -3px);
         filter: hue-rotate(360deg);
     }
+
     50% {
         transform: translate(0);
         filter: hue-rotate(0deg);
     }
+
     60% {
         transform: skew(2deg, 2deg);
     }
+
     70% {
         transform: skew(-2deg, -2deg);
     }
+
     80% {
         transform: scale(1.05);
     }
+
     90% {
         transform: scale(0.95);
     }
+
     100% {
         transform: translate(0);
     }
@@ -415,15 +429,19 @@ body {
     0% {
         background-color: transparent;
     }
+
     25% {
         background-color: rgba(107, 70, 193, 0.2);
     }
+
     50% {
         background-color: rgba(26, 54, 93, 0.2);
     }
+
     75% {
         background-color: rgba(159, 122, 234, 0.2);
     }
+
     100% {
         background-color: transparent;
     }
@@ -433,42 +451,55 @@ body {
     0% {
         transform: translate(-50%, -50%) scale(1);
         opacity: 0.5;
-        background: radial-gradient(
-            circle,
-            rgba(107, 70, 193, 0.5) 0%,
-            rgba(26, 54, 93, 0.5) 50%,
-            transparent 70%
-        );
+        background: radial-gradient(circle,
+                rgba(107, 70, 193, 0.5) 0%,
+                rgba(26, 54, 93, 0.5) 50%,
+                transparent 70%);
     }
+
     50% {
         transform: translate(-50%, -50%) scale(1.2);
         opacity: 0.8;
-        background: radial-gradient(
-            circle,
-            rgba(159, 122, 234, 0.5) 0%,
-            rgba(107, 70, 193, 0.5) 50%,
-            transparent 70%
-        );
+        background: radial-gradient(circle,
+                rgba(159, 122, 234, 0.5) 0%,
+                rgba(107, 70, 193, 0.5) 50%,
+                transparent 70%);
     }
+
     100% {
         transform: translate(-50%, -50%) scale(1);
         opacity: 0.5;
-        background: radial-gradient(
-            circle,
-            rgba(107, 70, 193, 0.5) 0%,
-            rgba(26, 54, 93, 0.5) 50%,
-            transparent 70%
-        );
+        background: radial-gradient(circle,
+                rgba(107, 70, 193, 0.5) 0%,
+                rgba(26, 54, 93, 0.5) 50%,
+                transparent 70%);
     }
 }
 
 @keyframes glitch {
-    0% { transform: translate(0); }
-    20% { transform: translate(-2px, 2px); }
-    40% { transform: translate(-2px, -2px); }
-    60% { transform: translate(2px, 2px); }
-    80% { transform: translate(2px, -2px); }
-    100% { transform: translate(0); }
+    0% {
+        transform: translate(0);
+    }
+
+    20% {
+        transform: translate(-2px, 2px);
+    }
+
+    40% {
+        transform: translate(-2px, -2px);
+    }
+
+    60% {
+        transform: translate(2px, 2px);
+    }
+
+    80% {
+        transform: translate(2px, -2px);
+    }
+
+    100% {
+        transform: translate(0);
+    }
 }
 
 /* ASCII Art Styles */
@@ -562,8 +593,15 @@ body {
 }
 
 @keyframes blink {
-    0%, 100% { opacity: 1; }
-    50% { opacity: 0; }
+
+    0%,
+    100% {
+        opacity: 1;
+    }
+
+    50% {
+        opacity: 0;
+    }
 }
 
 body {
@@ -615,16 +653,34 @@ body.loaded {
 }
 
 @keyframes color-cycle {
-    0% { color: #ff00ff; text-shadow: 0 0 10px #ff00ff; }
-    33% { color: #00ffff; text-shadow: 0 0 10px #00ffff; }
-    66% { color: #ffff00; text-shadow: 0 0 10px #ffff00; }
-    100% { color: #ff00ff; text-shadow: 0 0 10px #ff00ff; }
+    0% {
+        color: #ff00ff;
+        text-shadow: 0 0 10px #ff00ff;
+    }
+
+    33% {
+        color: #00ffff;
+        text-shadow: 0 0 10px #00ffff;
+    }
+
+    66% {
+        color: #ffff00;
+        text-shadow: 0 0 10px #ffff00;
+    }
+
+    100% {
+        color: #ff00ff;
+        text-shadow: 0 0 10px #ff00ff;
+    }
 }
 
 @keyframes float-letter {
-    0%, 100% {
+
+    0%,
+    100% {
         transform: translateY(0);
     }
+
     50% {
         transform: translateY(-3px);
     }
@@ -634,6 +690,7 @@ body.loaded {
     0% {
         transform: translate(200%, -50%);
     }
+
     100% {
         transform: translate(-200%, -50%);
     }
@@ -681,6 +738,7 @@ body.loaded {
     from {
         transform: rotate(0deg);
     }
+
     to {
         transform: rotate(360deg);
     }
@@ -739,15 +797,31 @@ body.loaded {
 }
 
 @keyframes flashBackground {
-    0% { background: black; }
-    50% { background: white; }
-    100% { background: black; }
+    0% {
+        background: black;
+    }
+
+    50% {
+        background: white;
+    }
+
+    100% {
+        background: black;
+    }
 }
 
 @keyframes jumpscareEffect {
-    0% { transform: scale(0) rotate(0deg); }
-    50% { transform: scale(2) rotate(360deg); }
-    100% { transform: scale(1) rotate(720deg); }
+    0% {
+        transform: scale(0) rotate(0deg);
+    }
+
+    50% {
+        transform: scale(2) rotate(360deg);
+    }
+
+    100% {
+        transform: scale(1) rotate(720deg);
+    }
 }
 
 /* Loading Screen */
@@ -896,10 +970,12 @@ body.loaded {
         transform: translate(-50%, -50%) scale(0) skew(20deg);
         opacity: 0;
     }
+
     50% {
         transform: translate(-50%, -50%) scale(1.2) skew(-20deg);
         opacity: 0.5;
     }
+
     100% {
         transform: translate(-50%, -50%) scale(1) skew(0);
         opacity: 1;
@@ -911,11 +987,25 @@ body.loaded {
 }
 
 @keyframes screenGlitch {
-    0% { filter: none; }
-    25% { filter: hue-rotate(90deg) brightness(1.5) contrast(2); }
-    50% { filter: hue-rotate(-90deg) brightness(0.5) contrast(3); }
-    75% { filter: hue-rotate(180deg) brightness(1.2) contrast(1.5); }
-    100% { filter: none; }
+    0% {
+        filter: none;
+    }
+
+    25% {
+        filter: hue-rotate(90deg) brightness(1.5) contrast(2);
+    }
+
+    50% {
+        filter: hue-rotate(-90deg) brightness(0.5) contrast(3);
+    }
+
+    75% {
+        filter: hue-rotate(180deg) brightness(1.2) contrast(1.5);
+    }
+
+    100% {
+        filter: none;
+    }
 }
 
 /* UV Meter */
@@ -1028,6 +1118,7 @@ body.loaded {
     flex: 1;
     height: 3px;
     -webkit-appearance: none;
+    appearance: none;
     background: var(--primary-color);
     outline: none;
     opacity: 0.7;
@@ -1066,34 +1157,67 @@ body.loaded {
     width: 100%;
     height: 100%;
     pointer-events: none;
-    background: 
-        repeating-radial-gradient(
-            circle at center,
+    background:
+        repeating-radial-gradient(circle at center,
             transparent 0,
             rgba(255, 0, 0, 0.2) 20px,
-            rgba(255, 165, 0, 0.2) 40px
-        );
+            rgba(255, 165, 0, 0.2) 40px);
     mix-blend-mode: screen;
     animation: fire 0.5s infinite;
     z-index: 9999;
 }
 
 @keyframes backgroundCrazy {
-    0% { background-position: 0% 50%; }
-    50% { background-position: 100% 50%; }
-    100% { background-position: 0% 50%; }
+    0% {
+        background-position: 0% 50%;
+    }
+
+    50% {
+        background-position: 100% 50%;
+    }
+
+    100% {
+        background-position: 0% 50%;
+    }
 }
 
 @keyframes fire {
-    0% { transform: scale(1) rotate(0deg); }
-    50% { transform: scale(1.1) rotate(5deg); }
-    100% { transform: scale(1) rotate(0deg); }
+    0% {
+        transform: scale(1) rotate(0deg);
+    }
+
+    50% {
+        transform: scale(1.1) rotate(5deg);
+    }
+
+    100% {
+        transform: scale(1) rotate(0deg);
+    }
 }
 
 @keyframes crazyText {
-    0% { transform: translate(-2px, -2px); color: #ff0000; }
-    25% { transform: translate(2px, -2px); color: #00ff00; }
-    50% { transform: translate(-2px, 2px); color: #0000ff; }
-    75% { transform: translate(2px, 2px); color: #ff00ff; }
-    100% { transform: translate(-2px, -2px); color: #ff0000; }
+    0% {
+        transform: translate(-2px, -2px);
+        color: #ff0000;
+    }
+
+    25% {
+        transform: translate(2px, -2px);
+        color: #00ff00;
+    }
+
+    50% {
+        transform: translate(-2px, 2px);
+        color: #0000ff;
+    }
+
+    75% {
+        transform: translate(2px, 2px);
+        color: #ff00ff;
+    }
+
+    100% {
+        transform: translate(-2px, -2px);
+        color: #ff0000;
+    }
 }
