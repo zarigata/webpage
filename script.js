@@ -2,10 +2,10 @@
 function copyDiscord() {
     const discordTag = "Zarigata";
     navigator.clipboard.writeText(discordTag);
-    
+
     const notification = document.getElementById('notification');
     notification.classList.add('show');
-    
+
     setTimeout(() => {
         notification.classList.remove('show');
     }, 2000);
@@ -13,7 +13,7 @@ function copyDiscord() {
 
 // Glitch effect on hover
 const glitchText = document.querySelector('.glitch');
-glitchText.addEventListener('mouseover', function() {
+glitchText.addEventListener('mouseover', function () {
     this.style.animation = 'glitch 100ms infinite';
     this.style.textShadow = `
         0 0 20px var(--primary-color),
@@ -23,7 +23,7 @@ glitchText.addEventListener('mouseover', function() {
     `;
 });
 
-glitchText.addEventListener('mouseout', function() {
+glitchText.addEventListener('mouseout', function () {
     this.style.animation = 'textGlow 2s ease-in-out infinite alternate';
     this.style.textShadow = '';
 });
@@ -66,7 +66,7 @@ for (let i = 0; i < maxTrails; i++) {
 document.addEventListener('mousemove', (e) => {
     mouseX = e.clientX;
     mouseY = e.clientY;
-    
+
     cursor.style.left = (mouseX - 12) + 'px';
     cursor.style.top = (mouseY - 12) + 'px';
 
@@ -77,11 +77,11 @@ document.addEventListener('mousemove', (e) => {
             if (Math.random() > 0.9) {
                 trail.char = matrixChars[Math.floor(Math.random() * matrixChars.length)];
             }
-            
+
             trail.x = mouseX + (Math.random() - 0.5) * 50;
             trail.y = mouseY + index * 20;
             trail.alpha = 1 - (index / maxTrails);
-            
+
             trail.element.textContent = trail.char;
             trail.element.style.left = (trail.x - 8) + 'px';
             trail.element.style.top = trail.y + 'px';
@@ -99,10 +99,10 @@ setInterval(() => {
         const yOffset = (Math.random() - 0.5) * 10;
         const scaleOffset = 0.95 + Math.random() * 0.1;
         const rotation = (Math.random() - 0.5) * 5;
-        
+
         glitchImage.style.transform = `translate(${xOffset}px, ${yOffset}px) scale(${scaleOffset}) rotate(${rotation}deg)`;
         glitchImage.style.filter = `hue-rotate(${Math.random() * 360}deg) brightness(1.2)`;
-        
+
         setTimeout(() => {
             glitchImage.style.transform = '';
             glitchImage.style.filter = '';
@@ -164,7 +164,7 @@ async function startLoadingSequence() {
 
     // Add glitch effect to ASCII art
     setInterval(() => {
-        asciiContainer.style.transform = Math.random() > 0.95 ? 
+        asciiContainer.style.transform = Math.random() > 0.95 ?
             `translate(${Math.random() * 5}px, ${Math.random() * 5}px)` : 'none';
     }, 50);
 
@@ -196,10 +196,10 @@ function showJumpscare() {
     const loadingScreen = document.getElementById('loading-screen');
     const jumpscare = document.querySelector('.jumpscare');
     const mainContent = document.getElementById('main-content');
-    
+
     loadingScreen.style.display = 'none';
     jumpscare.classList.add('active');
-    
+
     // Play glitch sound only if user has interacted
     document.addEventListener('click', function playSound() {
         const glitchSound = new Audio('data:audio/wav;base64,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////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////VEFHAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAU291bmRib3kuZGUAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAMjAwNGh0dHA6Ly93d3cuc291bmRib3kuZGUAAAAAAAAAACU=');
@@ -212,7 +212,7 @@ function showJumpscare() {
         jumpscare.classList.remove('active');
         mainContent.classList.remove('hidden');
         document.body.classList.add('loaded');
-        
+
         // Initialize scroller after showing main content
         new ScrollingText();
     }, 500);
@@ -314,30 +314,49 @@ class MiniTerminal {
                 if (wasPlaying) {
                     this.togglePlay();
                 }
-                
+
                 // Add loading effect
                 const terminal = document.querySelector('.terminal');
-                terminal.innerHTML += '<div class="command-output" style="color: #0ff">Initializing Doom Engine...</div>';
-                terminal.innerHTML += '<div class="command-output" style="color: #0ff">Prepare for demon slaying...</div>';
-                terminal.innerHTML += '<div class="command-output" style="color: #ff0">RIP AND TEAR!</div>';
-                
-                // Redirect to Doom page
+                terminal.innerHTML += '<div class="command-output" style="color: #0ff">Initializing Duke Nukem 3D...</div>';
+                terminal.innerHTML += '<div class="command-output" style="color: #0ff">Prepare to kick ass...</div>';
+                terminal.innerHTML += '<div class="command-output" style="color: #ff0">LET\'S ROCK!</div>';
+
+                // Redirect to Duke page
                 setTimeout(() => {
                     window.location.href = 'duke/index.html';
+                }, 2000);
+                return;
+            },
+            'doom': () => {
+                // Save current music state
+                const wasPlaying = this.isPlaying;
+                if (wasPlaying) {
+                    this.togglePlay();
+                }
+
+                // Add loading effect
+                const terminal = document.querySelector('.terminal');
+                terminal.innerHTML += '<div class="command-output" style="color: #f00">Initializing DOOM Engine...</div>';
+                terminal.innerHTML += '<div class="command-output" style="color: #f00">Opening portal to hell...</div>';
+                terminal.innerHTML += '<div class="command-output" style="color: #f00">RIP AND TEAR!</div>';
+
+                // Redirect to Doom page
+                setTimeout(() => {
+                    window.location.href = 'doom/index.html';
                 }, 2000);
                 return;
             },
             'crazy': () => {
                 this.print('INITIATING CHAOS MODE!');
                 this.print('PREPARE FOR 3 MINUTES OF MADNESS!');
-                
+
                 // Add crazy effects class to body
                 document.body.classList.add('crazy-mode');
-                
+
                 // Make elements go crazy
                 const elements = document.querySelectorAll('button, a, img, .terminal, h1, p');
                 const animations = [];
-                
+
                 elements.forEach(el => {
                     el.style.transition = 'all 0.5s';
                     const animation = setInterval(() => {
@@ -395,7 +414,7 @@ class MiniTerminal {
                     // Clear all intervals
                     animations.forEach(interval => clearInterval(interval));
                     clearInterval(countdownInterval);
-                    
+
                     // Remove effects
                     document.body.classList.remove('crazy-mode');
                     fire.remove();
@@ -409,10 +428,10 @@ class MiniTerminal {
                         text.style.animation = '';
                     });
                     audio.pause();
-                    
+
                     this.print('Chaos mode deactivating...');
                     this.print('Preparing for system reboot...');
-                    
+
                     // Add a short delay before refresh
                     setTimeout(() => {
                         window.location.reload();
@@ -422,7 +441,7 @@ class MiniTerminal {
             'nes': () => {
                 this.print('Launching SNES Emulator...');
                 this.print('Loading game library...');
-                
+
                 setTimeout(() => {
                     window.location.href = 'snes/index.html';
                 }, 1500);
@@ -436,7 +455,7 @@ class MiniTerminal {
             if (e.key === 'Enter') {
                 const command = this.input.value.trim().toLowerCase();
                 this.input.value = '';
-                
+
                 // Execute the command
                 this.executeCommand(command);
             }
@@ -451,7 +470,7 @@ class MiniTerminal {
 
     handleLogoClick() {
         this.clickCount++;
-        
+
         // Play beep sound
         const beep = new Audio('data:audio/wav;base64,//uQRAAAAWMSLwUIYAAsYkXgoQwAEaYLWfkWgAI0wWs/ItAAAGDgYtAgAyN+QWaAAihwMWm4G8QQRDiMcCBcH3Cc+CDv/7xA4Tvh9Rz/y8QADBwMWgQAZG/ILNAARQ4GLTcDeIIIhxGOBAuD7hOfBB3/94gcJ3w+o5/5eIAIAAAVwWgQAVQ2ORaIQwEMAJiDg95G4nQL7mQVWI6GwRcfsZAcsKkJvxgxEjzFUgfHoSQ9Qq7KNwqHwuB13MA4a1q/DmBrHgPcmjiGoh//EwC5nGPEmS4RcfkVKOhJf+WOgoxJclFz3kgn//dBA+ya1GhurNn8zb//9NNutNuhz31f////9vt///z+IdAEAAAK4LQIAKobHItEIYCGAExBwe8jcToF9zIKrEdDYIuP2MgOWFSE34wYiR5iqQPj0JIeoVdlG4VD4XA67mAcNa1fhzA1jwHuTRxDUQ//iYBczjHiTJcIuPyKlHQkv/LHQUYkuSi57yQT//uggfZNajQ3Vmz+Zt//+mm3Wm3Q576v////+32///5/EOgAAADVghQAAAAA==');
         beep.play();
@@ -498,6 +517,7 @@ class MiniTerminal {
         this.print('  whoami  - Show current user');
         this.print('  exit    - Close terminal');
         this.print('  duke    - Play Duke Nukem 3D');
+        this.print('  doom    - Play DOOM');
         this.print('  (CRAZY) - Enable chaos mode');
         this.print('  nes     - Play SNES Emulator');
     }
@@ -516,7 +536,7 @@ class MiniTerminal {
     executeCommand(commandLine) {
         const [cmd, ...args] = commandLine.split(' ');
         this.print(`root@zarigata:~$ ${commandLine}`);
-        
+
         if (this.commands[cmd]) {
             this.commands[cmd](args);
         } else if (cmd) {
@@ -534,15 +554,15 @@ document.addEventListener('DOMContentLoaded', () => {
 class MusicPlayer {
     constructor() {
         this.tracks = [];
-        
+
         // Initialize UI Elements
         this.initializeUIElements();
-        
+
         // Create audio element
         this.audio = new Audio();
         this.audio.crossOrigin = "anonymous";
         this.audio.volume = 0.5;
-        
+
         this.currentTrackIndex = 0;
         this.isPlaying = false;
         this.audioContextInitialized = false;
@@ -550,7 +570,7 @@ class MusicPlayer {
         // Initialize
         this.setupDraggable();
         this.setupControls();
-        
+
         // Load tracks and start player
         this.loadTrackList().then(() => {
             this.shuffleTracks();
@@ -605,13 +625,13 @@ class MusicPlayer {
             if (!response.ok) {
                 throw new Error('Failed to fetch track list');
             }
-            
+
             this.tracks = await response.json();
             console.log(`Loaded ${this.tracks.length} tracks`);
-            
+
             // Update current track index
             this.currentTrackIndex = Math.floor(Math.random() * this.tracks.length);
-            
+
         } catch (error) {
             console.error('Error loading track list:', error);
             // Fallback to a default track if loading fails
@@ -627,19 +647,19 @@ class MusicPlayer {
         try {
             this.currentTrackIndex = index;
             const track = this.tracks[index];
-            
+
             console.log('Loading track:', track.url);
-            
+
             // Update UI first
             this.trackNameElement.textContent = `${track.artist} - ${track.name}`;
-            
+
             // Store current playing state
             const wasPlaying = this.isPlaying;
-            
+
             // Load new track
             this.audio.src = track.url;
             this.audio.load();
-            
+
             // If we were playing before, start playing the new track
             if (wasPlaying) {
                 this.audio.play()
@@ -698,17 +718,17 @@ class MusicPlayer {
             this.audioContext = new (window.AudioContext || window.webkitAudioContext)();
             this.analyser = this.audioContext.createAnalyser();
             this.analyser.fftSize = 256;
-            
+
             // Connect audio nodes
             this.source = this.audioContext.createMediaElementSource(this.audio);
             this.source.connect(this.analyser);
             this.analyser.connect(this.audioContext.destination);
-            
+
             this.dataArray = new Uint8Array(this.analyser.frequencyBinCount);
-            
+
             // Start UV meter animation
             this.setupUVMeter();
-            
+
             this.audioContextInitialized = true;
         } catch (error) {
             console.error('Failed to initialize audio context:', error);
@@ -728,21 +748,21 @@ class MusicPlayer {
     setupControls() {
         // Play/Pause
         this.playPauseBtn.addEventListener('click', () => this.togglePlay());
-        
+
         // Previous Track
         this.prevBtn.addEventListener('click', () => this.prevTrack());
-        
+
         // Next Track
         this.nextBtn.addEventListener('click', () => this.nextTrack());
-        
+
         // Volume Control
         this.volumeSlider.addEventListener('input', (e) => {
             this.audio.volume = e.target.value / 100;
         });
-        
+
         // Track ended
         this.audio.addEventListener('ended', () => this.nextTrack());
-        
+
         // Audio error handling
         this.audio.addEventListener('error', (e) => {
             console.error('Audio error:', e.target.error);
@@ -760,46 +780,46 @@ class MusicPlayer {
         let lastTime = Date.now();
         let peakValues = new Array(32).fill(0);
         let peakDecay = 2;
-        
+
         const drawMeter = () => {
             requestAnimationFrame(drawMeter);
-            
+
             const width = this.canvas.width;
             const height = this.canvas.height;
             const barWidth = width / 32;
             const now = Date.now();
             const deltaTime = now - lastTime;
             lastTime = now;
-            
+
             this.analyser.getByteFrequencyData(this.dataArray);
-            
+
             // Clear canvas with a slight fade effect
             this.canvasCtx.fillStyle = 'rgba(0, 0, 0, 0.3)';
             this.canvasCtx.fillRect(0, 0, width, height);
-            
+
             // Create multiple gradients for different effects
             const mainGradient = this.canvasCtx.createLinearGradient(0, height, 0, 0);
             mainGradient.addColorStop(0, '#ff0000');
             mainGradient.addColorStop(0.5, '#ffff00');
             mainGradient.addColorStop(1, '#00ff00');
-            
+
             const peakGradient = this.canvasCtx.createLinearGradient(0, height, 0, 0);
             peakGradient.addColorStop(0, '#ff4444');
             peakGradient.addColorStop(0.5, '#ffff44');
             peakGradient.addColorStop(1, '#44ff44');
-            
+
             // Draw frequency bars and peaks
             for (let i = 0; i < this.analyser.frequencyBinCount; i++) {
                 const value = this.dataArray[i];
                 const barHeight = (value / 255) * height;
-                
+
                 // Update peak values
                 if (barHeight > peakValues[i]) {
                     peakValues[i] = barHeight;
                 } else {
                     peakValues[i] = Math.max(0, peakValues[i] - peakDecay);
                 }
-                
+
                 // Draw main bar with glow effect
                 this.canvasCtx.fillStyle = mainGradient;
                 this.canvasCtx.shadowBlur = 15;
@@ -810,7 +830,7 @@ class MusicPlayer {
                     barWidth - 1,
                     barHeight
                 );
-                
+
                 // Draw peak marker
                 this.canvasCtx.fillStyle = peakGradient;
                 this.canvasCtx.shadowBlur = 10;
@@ -821,10 +841,10 @@ class MusicPlayer {
                     4
                 );
             }
-            
+
             // Reset shadow effect
             this.canvasCtx.shadowBlur = 0;
-            
+
             // Add scan line effect
             const scanLinePos = (Date.now() % 1000) / 1000 * height;
             const scanGradient = this.canvasCtx.createLinearGradient(0, scanLinePos - 5, 0, scanLinePos + 5);
@@ -833,11 +853,11 @@ class MusicPlayer {
             scanGradient.addColorStop(1, 'rgba(255, 255, 255, 0)');
             this.canvasCtx.fillStyle = scanGradient;
             this.canvasCtx.fillRect(0, scanLinePos - 5, width, 10);
-            
+
             // Add grid effect
             this.canvasCtx.strokeStyle = 'rgba(255, 255, 255, 0.1)';
             this.canvasCtx.lineWidth = 1;
-            
+
             // Vertical grid lines
             for (let i = 0; i < width; i += barWidth * 2) {
                 this.canvasCtx.beginPath();
@@ -845,7 +865,7 @@ class MusicPlayer {
                 this.canvasCtx.lineTo(i, height);
                 this.canvasCtx.stroke();
             }
-            
+
             // Horizontal grid lines
             for (let i = 0; i < height; i += height / 8) {
                 this.canvasCtx.beginPath();
@@ -854,7 +874,7 @@ class MusicPlayer {
                 this.canvasCtx.stroke();
             }
         };
-        
+
         drawMeter();
     }
 
@@ -894,7 +914,7 @@ class MusicPlayer {
                 currentY = e.clientY - initialY;
                 xOffset = currentX;
                 yOffset = currentY;
-                
+
                 this.playerWindow.style.transform = `translate(${currentX}px, ${currentY}px)`;
             }
         };

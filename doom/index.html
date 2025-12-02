@@ -1,10 +1,9 @@
 <!DOCTYPE html>
 <html lang="en">
-
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Duke Nukem 3D - Easter Egg</title>
+    <title>DOOM - Easter Egg</title>
     <style>
         body {
             background-color: #000;
@@ -18,59 +17,59 @@
             min-height: 100vh;
             overflow: hidden;
         }
-
+        
         #dosbox {
             width: 800px;
             height: 600px;
-            border: 2px solid #0ff;
-            box-shadow: 0 0 20px rgba(0, 255, 255, 0.5);
+            border: 2px solid #f00;
+            box-shadow: 0 0 20px rgba(255, 0, 0, 0.5);
             margin: 20px;
             background-color: #000;
         }
-
+        
         .dosbox-overlay {
-            background-image: url('duke3d-loading.png');
+            background-image: url('https://upload.wikimedia.org/wikipedia/en/5/57/Doom_cover_art.jpg');
             background-size: cover;
         }
-
+        
         .dosbox-loader {
             background-color: #000 !important;
-            box-shadow: 0 0 10px #0ff !important;
+            box-shadow: 0 0 10px #f00 !important;
         }
-
+        
         .dosbox-loader-message {
-            color: #0ff !important;
+            color: #f00 !important;
             font-family: 'Courier New', monospace !important;
         }
-
+        
         .controls {
             margin: 20px;
             text-align: center;
         }
-
+        
         button {
             background: #000;
-            color: #0ff;
-            border: 2px solid #0ff;
+            color: #f00;
+            border: 2px solid #f00;
             padding: 10px 20px;
             font-family: 'Courier New', monospace;
             cursor: pointer;
             transition: all 0.3s ease;
             margin: 0 10px;
         }
-
+        
         button:hover {
-            background: #0ff;
+            background: #f00;
             color: #000;
         }
-
+        
         .instructions {
-            color: #0ff;
+            color: #f00;
             text-align: center;
             margin: 20px;
             max-width: 600px;
         }
-
+        
         .back-button {
             position: fixed;
             top: 20px;
@@ -78,24 +77,23 @@
         }
 
         #status {
-            color: #0ff;
+            color: #f00;
             margin: 10px;
             text-align: center;
         }
     </style>
 </head>
-
 <body>
     <button class="back-button" onclick="window.location.href='../'">← Back to Terminal</button>
-
+    
     <div id="dosbox"></div>
     <div id="status">Loading...</div>
-
+    
     <div class="controls">
         <button onclick="dosbox.requestFullscreen()">Fullscreen</button>
         <button onclick="location.reload()">Restart Game</button>
     </div>
-
+    
     <div class="instructions">
         <h3>Controls:</h3>
         <p>Move: Arrow Keys</p>
@@ -116,12 +114,12 @@
         Dos(document.getElementById("dosbox"))
             .then(dos => {
                 dosbox = dos;
-                status.innerHTML = "Loading Duke Nukem 3D...";
-
-                return dos.extract("https://js-dos.com/cdn/upload/Duke%20Nukem%203d-@digitalwalt.zip");
+                status.innerHTML = "Loading DOOM...";
+                
+                return dos.extract("https://js-dos.com/cdn/upload/DOOM-@evilution.zip");
             })
             .then(() => {
-                return dosbox.run(["-c", "cd DUKE3D", "-c", "DUKE3D.EXE"]);
+                return dosbox.run(["-c", "cd DOOM", "-c", "DOOM.EXE"]);
             })
             .then(() => {
                 status.innerHTML = "Game loaded! Press any key to start.";
@@ -132,5 +130,4 @@
             });
     </script>
 </body>
-
 </html>
