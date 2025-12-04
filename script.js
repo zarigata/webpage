@@ -1089,5 +1089,5 @@ class MusicPlayer {
 
 // Initialize music player when DOM is loaded
 document.addEventListener('DOMContentLoaded', () => {
-    window.musicPlayer = new MusicPlayer();
+    new MusicPlayer();
 });
