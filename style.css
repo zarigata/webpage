@@ -9,29 +9,6 @@
 }
 
 * {
-    margin: 0;
-    padding: 0;
-    box-sizing: border-box;
-}
-
-body {
-    font-family: 'Orbitron', sans-serif;
-    background-color: var(--background-color);
-    color: var(--text-color);
-    min-height: 100vh;
-    display: flex;
-    justify-content: center;
-    align-items: center;
-    background-image: url('dark_purple_3d_fractal_4k_hd_abstract.jpg');
-    background-size: cover;
-    background-position: center;
-    background-attachment: fixed;
-    cursor: none;
-}
-
-.cursor {
-    width: 20px;
-    height: 20px;
     border-radius: 50%;
     position: fixed;
     pointer-events: none;
@@ -619,25 +596,14 @@ body {
     }
 }
 
-body {
-    background: #0A0A0A;
-}
-
-body.loaded {
-    background: url('dark_purple_3d_fractal_4k_hd_abstract.jpg') center/cover fixed;
-}
-
-/* Scrolling Text Bar */
-#scroll-bar {
-    position: fixed;
-    bottom: 0;
-    left: 0;
-    width: 100%;
-    height: 5vh;
-    background: rgba(10, 10, 10, 0.9);
-    border-top: 2px solid var(--primary-color);
-    overflow: hidden;
-    z-index: 1000;
+bottom: 0;
+left: 0;
+width: 100%;
+height: 5vh;
+background: rgba(10, 10, 10, 0.9);
+border-top: 2px solid var(--primary-color);
+overflow: hidden;
+z-index: 1000;
 }
 
 .scroll-text {
