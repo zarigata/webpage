@@ -228,16 +228,41 @@ class ScrollingText {
     constructor() {
         this.scrollText = document.querySelector('.scroll-text');
         this.sentences = [
-            "you cant cok 6milions pizzas in only 2 ovens in a period of 1 year",
-            "真のチャドだけが参加する",
-            "Die Regierung belügt Sie",
-            "新冠病毒是個謊言，而你卻允許",
-            "Initializing neural network",
-            "Matrix connection established",
-            "不法移民は役に立たない、文化的豊かさはグローバリストの嘘",
-            "Bypassing security measures",
-            "Der österreichische Maler war eine Warnung, und wir haben nicht zugehört, es wird wieder passieren",
-            "Cyber realm activated"
+            // Christianity - Jesus is the Son of God
+            "The blind see, the lame walk, and the dead rise, testifying that He is the Son of God",
+            "No princípio era o Verbo, e o Verbo estava com Deus, e o Verbo era Deus - João 1:1",
+            "Este es mi Hijo amado, en quien tengo complacencia - Mateo 3:17",
+            "Io sono la via, la verità e la vita; nessuno viene al Padre se non per mezzo di me - Giovanni 14:6",
+            "Yeshua Mshiha, Bar Alaha - Jesus Christ, Son of God",
+            "He is the image of the invisible God, the firstborn of all creation",
+            "Porque Deus amou o mundo de tal maneira que deu o seu Filho unigênito",
+            "Y declaró ser Hijo de Dios con poder por la resurrección de entre los muertos",
+            "Veramente quest'uomo era Figlio di Dio!",
+            "By His wounds we are healed, for the Messiah has risen",
+
+            // Roman Emperors - Justification of Action
+            "Pax Romana demands order; rebellion in Judea disturbs the peace of the world",
+            "A águia romana deve voar sobre Jerusalém para garantir a civilização",
+            "Roma no conquista por odio, sino para traer la ley a los ingobernables",
+            "L'ordine dell'Impero è la volontà degli dei per tutti i popoli",
+            "皇帝の意志は絶対であり、秩序は剣によってのみ維持される",
+            "Rzym przynosi prawo tam, gdzie panował chaos i fanatyzm",
+            "To rule is to serve the destiny of mankind, suppressing the zealots is necessary",
+            "Nossa mão é pesada apenas sobre aqueles que recusam a luz de Roma",
+            "Las legiones marchan no para destruir, sino para pacificar y edificar",
+            "Caesar's law brings stability to the Levant",
+
+            // Anti-Communism
+            "Communism is a corruption of the soul, stripping man of his divine dignity",
+            "A foice e o martelo esmagam a liberdade e a prosperidade das nações",
+            "共産主義は人類の歴史における最大の過ちであり、自由への冒涜だ",
+            "Il comunismo ha portato solo miseria, fame e catene ai popoli che ha toccato",
+            "Czerwona zaraza niszczy ducha narodu i prawdę historii",
+            "Donde entra el comunismo, muere la esperanza y nace la tiranía",
+            "History has judged the red ideology as a failure of humanity and reason",
+            "Não há igualdade na miséria; o comunismo é a distribuição do sofrimento",
+            "Pamiętamy ofiary systemu, który obiecał raj a stworzył piekło",
+            "個人の自由を否定するイデオロギーに未来はない"
         ];
         this.currentIndex = 0;
         this.letterColors = ['#ff00ff', '#00ffff', '#ffff00', '#ff0000', '#00ff00'];
