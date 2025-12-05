@@ -229,40 +229,37 @@ class ScrollingText {
         this.scrollText = document.querySelector('.scroll-text');
         this.sentences = [
             // Christianity - Jesus is the Son of God
-            "The blind see, the lame walk, and the dead rise, testifying that He is the Son of God",
-            "No princípio era o Verbo, e o Verbo estava com Deus, e o Verbo era Deus - João 1:1",
-            "Este es mi Hijo amado, en quien tengo complacencia - Mateo 3:17",
-            "Io sono la via, la verità e la vita; nessuno viene al Padre se non per mezzo di me - Giovanni 14:6",
-            "Yeshua Mshiha, Bar Alaha - Jesus Christ, Son of God",
-            "He is the image of the invisible God, the firstborn of all creation",
-            "Porque Deus amou o mundo de tal maneira que deu o seu Filho unigênito",
-            "Y declaró ser Hijo de Dios con poder por la resurrección de entre los muertos",
-            "Veramente quest'uomo era Figlio di Dio!",
-            "By His wounds we are healed, for the Messiah has risen",
+            "† The blind see, the lame walk, and the dead rise, testifying that He is the Son of God †",
+            "† No princípio era o Verbo, e o Verbo estava com Deus, e o Verbo era Deus - João 1:1 †",
+            "† Este es mi Hijo amado, en quien tengo complacencia - Mateo 3:17 †",
+            "† Io sono la via, la verità e la vita; nessuno viene al Padre se non per mezzo di me - Giovanni 14:6 †",
+            "† Yeshua Mshiha, Bar Alaha - Jesus Christ, Son of God †",
+            "† He is the image of the invisible God, the firstborn of all creation - Colossians 1:15 †",
+            "† Porque Deus amou o mundo de tal maneira que deu o seu Filho unigênito - João 3:16 †",
+            "† Y declaró ser Hijo de Dios con poder por la resurrección de entre los muertos - Romanos 1:4 †",
+            "† Veramente quest'uomo era Figlio di Dio! - Marco 15:39 †",
+            "† By His wounds we are healed, for the Messiah has risen - Isaiah 53:5 †",
+            "† I can do all things through Christ who strengthens me - Philippians 4:13 †",
+            "† The Lord is my shepherd; I shall not want - Psalm 23:1 †",
+            "† Go therefore and make disciples of all nations - Matthew 28:19 †",
+            "† <>< In Him we live and move and have our being - Acts 17:28 ><> †",
+            "† For where two or three are gathered in my name, there am I among them - Matthew 18:20 †",
+            "† For God did not send his Son into the world to condemn the world, but in order that the world might be saved through him - John 3:17 †",
 
-            // Roman Emperors - Justification of Action
-            "Pax Romana demands order; rebellion in Judea disturbs the peace of the world",
-            "A águia romana deve voar sobre Jerusalém para garantir a civilização",
-            "Roma no conquista por odio, sino para traer la ley a los ingobernables",
-            "L'ordine dell'Impero è la volontà degli dei per tutti i popoli",
-            "皇帝の意志は絶対であり、秩序は剣によってのみ維持される",
-            "Rzym przynosi prawo tam, gdzie panował chaos i fanatyzm",
-            "To rule is to serve the destiny of mankind, suppressing the zealots is necessary",
-            "Nossa mão é pesada apenas sobre aqueles que recusam a luz de Roma",
-            "Las legiones marchan no para destruir, sino para pacificar y edificar",
-            "Caesar's law brings stability to the Levant",
+            // Warhammer 40K - Justification of Action
+            "✠ The Emperor protects; only through faith and fury can humanity endure ✠",
+            "✠ Pela glória do Imperador, purifiquem o herege, o mutante e o xeno ✠",
+            "~=][=~ No hay paz entre las estrellas, solo una eternidad de matanza y el hambre de dioses sedientos de sangre ~=][=~",
+            "✠ Solo nell'obbedienza all'Imperatore si trova la vera libertà per l'umanità ✠",
+            "✠ 皇帝陛下に忠誠を誓え、さもなくば死あるのみ ✠",
+            "~=][=~ W mroku dalekiej przyszłości jest tylko wojna ~=][=~",
+            "✠ Suffer not the alien to live, for they are an abomination in the sight of the Emperor ✠",
+            "✠ A lealdade é a sua recompensa, a fé é o seu escudo ✠",
+            "~=][=~ El conocimiento es poder, guárdalo bien ~=][=~",
+            "✠ Burn the heretic, kill the mutant, purge the xeno ✠",
+            "  ✠ FOR THE EMPEROR! ✠",
+            "  ~=][=~ IMPERIUM OF MAN ~=][=~"
 
-            // Anti-Communism
-            "Communism is a corruption of the soul, stripping man of his divine dignity",
-            "A foice e o martelo esmagam a liberdade e a prosperidade das nações",
-            "共産主義は人類の歴史における最大の過ちであり、自由への冒涜だ",
-            "Il comunismo ha portato solo miseria, fame e catene ai popoli che ha toccato",
-            "Czerwona zaraza niszczy ducha narodu i prawdę historii",
-            "Donde entra el comunismo, muere la esperanza y nace la tiranía",
-            "History has judged the red ideology as a failure of humanity and reason",
-            "Não há igualdade na miséria; o comunismo é a distribuição do sofrimento",
-            "Pamiętamy ofiary systemu, który obiecał raj a stworzył piekło",
-            "個人の自由を否定するイデオロギーに未来はない"
         ];
         this.currentIndex = 0;
         this.letterColors = ['#ff00ff', '#00ffff', '#ffff00', '#ff0000', '#00ff00'];
